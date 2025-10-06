@@ -10,7 +10,7 @@ public class Main {
         // Server server = new Server();
         // System.out.println(sockets.getServerSocket().toString());
         // sockets.listen();
-        System.out.println(sockets.toString());
+       // System.out.println(sockets.toString());
         // System.out.println(server.toString());
         sockets.commandeer();
 

