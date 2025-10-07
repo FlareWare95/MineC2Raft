@@ -132,8 +132,9 @@ public class Server {
         System.out.println("all: broadcast to all clients");
         try {
             response = reader.readLine();
+            
             return response;
-        } catch(IOException e) {
+        } catch(Exception e) {
 
         }
         return null;
@@ -154,6 +155,7 @@ public class Server {
         }
         System.out.println("\nWhere do you want to send this command?");
         String response = broadcastDestinationHandler();
+
         if(response != null) {
             if(response.equals("all")) {
                 for(ClientHandler client : clients) {
@@ -164,13 +166,11 @@ public class Server {
             } else {
                 try {
                     clients.get(Integer.parseInt(response)).sendMessage("CMD: " + msg);
-                } catch(NumberFormatException e) {
+                } catch(Exception e) {
                     System.out.println("Not a valid option.");
                 }
             }
         }
-
-       
     }
 
     public static void formatArrLst() {
