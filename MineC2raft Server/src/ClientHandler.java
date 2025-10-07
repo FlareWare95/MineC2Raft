@@ -15,20 +15,21 @@ public class ClientHandler extends Thread{
         socket = soc;
     }
 
-
-    public void runHandler() {
+    @Override
+    public void run() {
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
             String line;
             while ((line = in.readLine()) != null) {
-                System.out.println("[" + socket.getRemoteSocketAddress() + "]: " + line);
+                System.out.println(line);
 
                 out.println(line);
             }
         } catch (IOException e) {
             System.out.println("Connection lost: " + socket.getRemoteSocketAddress());
+            
         } finally {
             try {
                 socket.close();
