@@ -74,8 +74,6 @@ public class Client {
         }).start();
     }
 
-
-
 public static void clientRunner(PrintWriter writer) throws Exception {
     String userIn = "";
     while(!userIn.equals("quit")) {

@@ -76,51 +76,50 @@ public class Server {
      * @param cmd - the user input.
      */
     public static void commandHandler(String cmd) {
-        String reply;
         System.out.println(GREEN + "Start of broadcast: " + RESET + "\n");
-            switch(cmd) {
-                case "os", "version":
-                    reply = "ver";
-                    broadcast(reply, null);
-                    break;
-                case "user", "client":
-                    reply = "whoami";
-                    broadcast(reply, null);
-                    break;
-                case "coms", "commands", "cmd", "cmds": 
-                    reply = "               ********** MineC2raft Commands ***********\n\t\t" 
-                                + "os: prints the os of the client.\n\t\t"
-                                + "user: prints the name of the client.\n\t\t" 
-                                + "done: exits the client port\n\t\t" 
-                                + "about: about the program.\n\t"  
-                                + "       ******************************************\n\n" 
-                                + "WINDOWS ONLY\n(Maybe i'll add linux soon) but like lowk you can use a remote terminal \n" 
-                                + "Thats all you need to know foo\n\t\t";
+        String reply;
+        switch(cmd) {
+            case "os", "version":
+                reply = "ver";
+                broadcast(reply, null);
+                break;
+            case "user", "client":
+                reply = "whoami";
+                broadcast(reply, null);
+                break;
+            case "coms", "commands", "cmd", "cmds": 
+                reply = "               ********** MineC2raft Commands ***********\n\t\t" 
+                            + "os: prints the os of the client.\n\t\t"
+                            + "user: prints the name of the client.\n\t\t" 
+                            + "done: exits the client port\n\t\t" 
+                            + "about: about the program.\n\t"  
+                            + "       ******************************************\n\n" 
+                            + "WINDOWS ONLY\n(Maybe i'll add linux soon) but like lowk you can use a remote terminal \n" 
+                            + "Thats all you need to know foo\n\t\t";
 
-                    System.out.println(reply);
-                    break;
-                case "poop":
-                    for(int i = 1; i <= 100; i++) {
-                        System.out.println(i + ": Poop");
-                    }
-                    break;
-                case "about", "abt":
-                    reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
-                            + "Version: " + VERSION_NUM 
-                            + "\nWritten by Austin Hall for RIT's Red Team.\n" 
-                            + "For fun too lowk...\n\n" 
-                            + "A dud?\n/give @p minecraft:command_block";
-                    System.out.println(reply);
-                    break;
-                case "sockets", "clients":
-                    System.out.println("Current Connected clients: "+ clients.toString()); // Fix this so that it gives socket numbers
-                    System.out.println("\n" + "\u001B[31m" + "End of Command." + "\u001B[0m");
-                    break;                
-                default: 
-                    broadcast(cmd, null);
-                    break;  
-            }
-        
+                System.out.println(reply);
+                break;
+            case "poop":
+                for(int i = 1; i <= 100; i++) {
+                    System.out.println(i + ": Poop");
+                }
+                break;
+            case "about", "abt":
+                reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
+                        + "Version: " + VERSION_NUM 
+                        + "\nWritten by Austin Hall for RIT's Red Team.\n" 
+                        + "For fun too lowk...\n\n" 
+                        + "A dud?\n/give @p minecraft:command_block";
+                System.out.println(reply);
+                break;
+            case "sockets", "clients":
+                System.out.println("Current Connected clients: "+ clients.toString()); // Fix this so that it gives socket numbers
+                System.out.println("\n" + "\u001B[31m" + "End of Command." + "\u001B[0m");
+                break;                
+            default: 
+                broadcast(cmd, null);
+                break;  
+        }
     }
 
     /** 
