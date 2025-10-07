@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientHandler extends Thread{
@@ -29,6 +30,7 @@ public class ClientHandler extends Thread{
             }
         } catch (IOException e) {
             System.out.println("Connection lost: " + socket.getRemoteSocketAddress());
+            Server.clients.remove(this);
             
         } finally {
             try {
@@ -43,5 +45,13 @@ public class ClientHandler extends Thread{
         if (out != null) {
             out.println(msg);
         }
+    }
+
+    public int getPort() {
+        return socket.getLocalPort();
+    }
+
+    public InetAddress getInetAddr() {
+        return socket.getInetAddress();
     }
 }

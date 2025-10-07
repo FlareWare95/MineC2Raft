@@ -43,6 +43,7 @@ public class Client {
                             writer.println("cannot find path.");
                         }
                         writer.flush();
+                        writer.println("\n" + "\u001B[31m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
                         continue;
                     }
 
@@ -64,7 +65,7 @@ public class Client {
                     } catch(IOException ignored) {}
                 
                 shell.waitFor();
-                writer.println("\n" + "\u001B[31m" + "End of Command @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
+                writer.println("\n" + "\u001B[31m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
                 writer.flush();
                 }
                     

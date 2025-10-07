@@ -20,7 +20,7 @@ public class Server {
     
     
     private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
-    private static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
+    public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
     private ServerSocket serverSocket; //UDP socket
 
@@ -87,22 +87,25 @@ public class Server {
                 reply = "whoami";
                 broadcast(reply, null);
                 break;
-            case "coms", "commands", "cmd", "cmds": 
+            case "coms", "commands", "cmd", "cmds", "HELP": 
                 reply = "               ********** MineC2raft Commands ***********\n\t\t" 
-                            + "os: prints the os of the client.\n\t\t"
-                            + "user: prints the name of the client.\n\t\t" 
-                            + "done: exits the client port\n\t\t" 
+                            + "os: displays the os of the client.\n\t\t"
+                            + "user: displays the name of the client.\n\t\t" 
+                            + "quit: exits the client port.\n\t\t" 
+                            + "clients: displays all connected clients.\n\t\t"
                             + "about: about the program.\n\t"  
                             + "       ******************************************\n\n" 
                             + "WINDOWS ONLY\n(Maybe i'll add linux soon) but like lowk you can use a remote terminal \n" 
                             + "Thats all you need to know foo\n\t\t";
 
                 System.out.println(reply);
+                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
                 break;
             case "poop":
                 for(int i = 1; i <= 100; i++) {
                     System.out.println(i + ": Poop");
                 }
+                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
                 break;
             case "about", "abt":
                 reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
@@ -111,10 +114,11 @@ public class Server {
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p minecraft:command_block";
                 System.out.println(reply);
+                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
                 break;
-            case "sockets", "clients":
-                System.out.println("Current Connected clients: "+ clients.toString()); // Fix this so that it gives socket numbers
-                System.out.println("\n" + "\u001B[31m" + "End of Command." + "\u001B[0m");
+            case "sockets", "clients", "list", "lst", "array", "arr":
+                formatArrLst(); 
+                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
                 break;                
             default: 
                 broadcast(cmd, null);
@@ -134,6 +138,17 @@ public class Server {
             if (client != sender) {
                 client.sendMessage("CMD: " + msg);
             }
+        }
+    }
+
+    public static void formatArrLst() {
+        if(clients.size() > 0) {
+            System.out.println("Current Connected Clients: ");
+        } else {
+            System.out.println("No connected clients. ");
+        }
+        for(ClientHandler elements : clients) {
+            System.out.println(elements.getInetAddr() + ", Port " + elements.getPort());
         }
     }
 
