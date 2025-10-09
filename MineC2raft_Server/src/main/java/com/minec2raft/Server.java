@@ -25,6 +25,7 @@ public class Server {
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
     private ServerSocket serverSocket; //UDP socket
+    private ServerSocket minecraftSocket; //socket used to communicate directly to minecraft.
 
     /**
      * Creates a new Server object. please only make one of these bc idk what would happen if more than one is open...
@@ -32,6 +33,7 @@ public class Server {
     public Server(){
         try {
             serverSocket = new ServerSocket(50000);
+            minecraftSocket = new ServerSocket(5050);
         } catch(IOException e) {
             System.out.println("Creation of server Failed.");
         }
@@ -61,6 +63,20 @@ public class Server {
             }
         });
         connectionThread.start();
+
+        Thread minecraftThread = new Thread(() -> {
+            try {
+                Socket mineSoc = minecraftSocket.accept();
+
+                ClientHandler mineHandler = new ClientHandler(mineSoc);
+                System.out.println("minecraft socket connected.");
+                mineHandler.start();
+
+            } catch (IOException e) {
+                System.out.println("Minecraft thread error" + e);
+            }
+        });
+        minecraftThread.start();
 
         // Start user input listening.
         BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
@@ -114,7 +130,7 @@ public class Server {
                         + "Version: " + VERSION_NUM 
                         + "\nWritten by Austin Hall for RIT's Red Team.\n" 
                         + "For fun too lowk...\n\n" 
-                        + "A dud?\n/give @p minecraft:command_block";
+                        + "A dud?\n/give @p oak_sapling 100";
                 System.out.println(reply);
                 System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
                 break;

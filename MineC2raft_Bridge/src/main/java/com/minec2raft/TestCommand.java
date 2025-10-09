@@ -1,0 +1,34 @@
+package com.minec2raft;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+public class TestCommand implements CommandExecutor{
+    
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            ItemStack saplings = new ItemStack(Material.OAK_SAPLING);
+            
+            saplings.setAmount(100);
+
+            player.getInventory().addItem(saplings);
+            
+            player.sendMessage("Test of server console!");
+        }
+        
+
+        
+        
+        return true;
+    }
+}
