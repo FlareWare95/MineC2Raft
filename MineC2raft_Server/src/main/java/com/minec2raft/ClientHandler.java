@@ -1,3 +1,5 @@
+package main.java.com.minec2raft;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

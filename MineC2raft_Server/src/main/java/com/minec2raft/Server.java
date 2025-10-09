@@ -1,3 +1,5 @@
+package main.java.com.minec2raft;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,6 +54,7 @@ public class Server {
                     ClientHandler handler = new ClientHandler(clientSocket);
                     clients.add(handler);
                     handler.start(); 
+                    
                 }
             } catch (IOException e) {
                 System.out.println(RED + "Client thread stopped." + RESET);

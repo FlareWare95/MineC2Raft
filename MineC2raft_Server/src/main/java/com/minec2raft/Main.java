@@ -1,3 +1,4 @@
+package main.java.com.minec2raft;
 
 import java.io.IOException;
 

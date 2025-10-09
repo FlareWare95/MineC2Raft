@@ -1,0 +1,78 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.minec2raft'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(24)
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+}
+
+dependencies {
+    // Spigot API for plugin only (optional at root)
+    compileOnly 'org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+//
+// ---- BUILD CONFIGS FOR EACH MODULE ----
+//
+
+// 🟣 MineBridge (Spigot plugin)
+task buildMineBridge(type: Jar) {
+    dependsOn classes
+    archiveBaseName.set('MineBridge')
+    from sourceSets.main.output
+    includeEmptyDirs = false
+    from('MineC2raft_Bridge/src/main/resources') {
+        include '**/*'
+    }
+    from('MineC2raft_Bridge/src/main/java')
+    destinationDirectory.set(file("$buildDir/libs"))
+    manifest {
+        attributes 'Main-Class': 'com.minec2raft.MineBridge'
+    }
+}
+
+// 🟢 MineC2raft_Server
+task buildServer(type: Jar) {
+    dependsOn classes
+    archiveBaseName.set('MineC2raft_Server')
+    from('MineC2raft_Server/src/main/java')
+    destinationDirectory.set(file("$buildDir/libs"))
+    manifest {
+        attributes 'Main-Class': 'com.minec2raft.Main'
+    }
+}
+
+// 🔵 MineC2raft_Client
+task buildClient(type: Jar) {
+    dependsOn classes
+    archiveBaseName.set('MineC2raft_Client')
+    from('MineC2raft_Client/src/main/java')
+    destinationDirectory.set(file("$buildDir/libs"))
+    manifest {
+        attributes 'Main-Class': 'com.minec2raft.Client'
+    }
+}
+
+// 🔧 Make “gradle build” run all three
+build.dependsOn buildMineBridge, buildServer, buildClient
