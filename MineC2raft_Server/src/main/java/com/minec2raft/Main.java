@@ -1,9 +1,9 @@
-package main.java.com.minec2raft;
+package com.minec2raft;
 
 import java.io.IOException;
 
 public class Main {
-
+    
     public static void main(String args[]) throws IOException, InterruptedException {
         System.out.println("Initializing Server...");
 
