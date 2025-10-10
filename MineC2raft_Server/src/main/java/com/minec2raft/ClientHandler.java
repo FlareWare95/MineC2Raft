@@ -2,6 +2,7 @@ package com.minec2raft;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -55,5 +56,9 @@ public class ClientHandler extends Thread{
 
     public InetAddress getInetAddr() {
         return socket.getInetAddress();
+    }
+
+    public InputStream getInputStream() throws IOException{
+        return socket.getInputStream();
     }
 }

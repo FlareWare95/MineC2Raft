@@ -3,6 +3,7 @@ package com.minec2raft;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,6 +27,8 @@ public class Server {
 
     private ServerSocket serverSocket; //UDP socket
     private ServerSocket minecraftSocket; //socket used to communicate directly to minecraft.
+
+    private Socket mineSoc;
 
     /**
      * Creates a new Server object. please only make one of these bc idk what would happen if more than one is open...
@@ -66,7 +69,7 @@ public class Server {
 
         Thread minecraftThread = new Thread(() -> {
             try {
-                Socket mineSoc = minecraftSocket.accept();
+                mineSoc = minecraftSocket.accept();
 
                 ClientHandler mineHandler = new ClientHandler(mineSoc);
                 System.out.println("minecraft socket connected.");
@@ -85,7 +88,7 @@ public class Server {
 
         while((userIn = userReader.readLine()) != null && !userIn.equals("quit")) {
             commandHandler(userIn);
-
+            sendToMinecraft();
         }
     }    
 
@@ -163,7 +166,7 @@ public class Server {
     /** 
      * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
      */
-    public static void broadcast(String msg, ClientHandler sender) {
+    public static void  broadcast(String msg, ClientHandler sender) {
 
         if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
             return;
@@ -201,6 +204,17 @@ public class Server {
         for(int i = 0; i < clients.size(); i++) {
             System.out.println(YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort());
         }
+    }
+
+
+    public void sendToMinecraft() throws IOException{
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        PrintWriter writer = new PrintWriter(mineSoc.getOutputStream());
+        String str;
+        while((str = reader.readLine()) != null) {
+            writer.println(str);
+        }
+        
     }
 
 }

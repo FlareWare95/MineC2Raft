@@ -1,8 +1,6 @@
 package com.minec2raft;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 
 public class MineBridge extends JavaPlugin{
 

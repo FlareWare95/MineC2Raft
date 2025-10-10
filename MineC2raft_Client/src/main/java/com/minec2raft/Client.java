@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.concurrent.TimeUnit;
+// import java.net.SocketException;
+// import java.util.concurrent.TimeUnit;
 
 public class Client {
 
@@ -63,7 +63,6 @@ public class Client {
                         if(line.equals(END_STR)) {
                             continue;
                         }
-                        // System.out.println(line);
                         writer.println(line);
                         writer.flush();
                 }
@@ -79,18 +78,20 @@ public class Client {
             }
         }).start();
     }
+/**
+ * Broken rn
+ */
+// public static void clientRunner(PrintWriter writer) throws Exception {
+//     String userIn = "";
+//     while(!userIn.equals("quit")) {
+//         try {
+//             Socket socket = new Socket("localhost", 50000);
+//             TimeUnit.SECONDS.sleep(1);
+//             createThread(socket, writer);
+//         } catch (SocketException e) {
+//             System.out.println("Cannot resolve to host. Retrying...");
+//         }
 
-public static void clientRunner(PrintWriter writer) throws Exception {
-    String userIn = "";
-    while(!userIn.equals("quit")) {
-        try {
-            Socket socket = new Socket("localhost", 50000);
-            TimeUnit.SECONDS.sleep(1);
-            createThread(socket, writer);
-        } catch (SocketException e) {
-            System.out.println("Cannot resolve to host. Retrying...");
-        }
-
-    }
-}
+//     }
+// }
 }
