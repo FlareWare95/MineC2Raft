@@ -27,7 +27,7 @@ public class ClientHandler extends Thread{
 
             String line;
             while ((line = in.readLine()) != null) {
-                System.out.println(line);
+                System.out.println("HERE: " + line);
 
                 out.println(line);
             }

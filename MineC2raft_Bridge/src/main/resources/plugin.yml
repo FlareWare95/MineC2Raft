@@ -14,3 +14,6 @@ commands:
   stopServer:
     description: Stops the C2 Server.
     usage: /stopServer
+  sendMsg:
+    description: Send a command to the C2 server.
+    usage: /sendMsg

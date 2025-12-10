@@ -12,8 +12,7 @@ public class ClientHandler extends Thread{
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    
-
+    public String recentLn = "";
 
     public ClientHandler(Socket soc) {
         socket = soc;
@@ -26,11 +25,13 @@ public class ClientHandler extends Thread{
             out = new PrintWriter(socket.getOutputStream(), true);
 
             String line;
+            String finalLn = "";
             while ((line = in.readLine()) != null) {
-                System.out.println(line);
-
+                System.out.println("HERE + " + line);
+                finalLn += line + "\n";
                 out.println(line);
             }
+            recentLn = finalLn;
         } catch (IOException e) {
             System.out.println("Connection lost: " + socket.getRemoteSocketAddress());
             Server.clients.remove(this);
@@ -49,6 +50,10 @@ public class ClientHandler extends Thread{
             out.println(msg);
 
         }
+    }
+    
+    public String getRecentLn() {
+        return recentLn;
     }
 
     public int getPort() {

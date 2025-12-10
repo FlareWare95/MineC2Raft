@@ -15,7 +15,7 @@ public class Client {
 
     public static void main(String args[]) throws Exception {
             
-        Socket socket = new Socket("localhost", 50000);
+        Socket socket = new Socket("localhost", 5000);
         PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
         createThread(socket, writer);
     }

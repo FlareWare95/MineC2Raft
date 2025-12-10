@@ -1,4 +1,4 @@
-package com.minec2raft.Server.Commands;
+package com.minec2raft.Commands;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
