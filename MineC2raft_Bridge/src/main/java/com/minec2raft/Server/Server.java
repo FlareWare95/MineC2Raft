@@ -20,6 +20,7 @@ public class Server {
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
     private static final String RESET = "\u001B[0m";
+    private static boolean exists = false;
     
     
     private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
@@ -33,6 +34,7 @@ public class Server {
     public Server(){
         try {
             serverSocket = new ServerSocket(5000);
+            exists = true;
         } catch(IOException e) {
             
             System.out.println("Creation of server Failed. " + e);
@@ -188,5 +190,11 @@ public class Server {
             System.out.println(YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort());
         }
     }
-
+    /**
+     * lets hope this correctly checks to see if we've ever made a server, so that people can't make more than one.
+     * @return whether or not a server is enabled
+     */
+    public static boolean isEnabled() {
+        return exists;
+    }
 }
