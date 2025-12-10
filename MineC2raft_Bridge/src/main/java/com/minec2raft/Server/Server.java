@@ -23,10 +23,10 @@ import com.minec2raft.BridgeConnection;
 public class Server {
 
     //Escape codes or sommn for different colors (now changed for minecraft color coding). 
-    private static final String RED = "§4";
-    private static final String GREEN = "§2";
-    private static final String YELLOW = "§e";
-    private static final String RESET = "§f";
+    public static final String RED = "§4";
+    public static final String GREEN = "§2";
+    public static final String YELLOW = "§e";
+    public static final String RESET = "§f";
 
     private static boolean exists = false;
     private static BukkitTask connectionThread;
@@ -62,7 +62,7 @@ public class Server {
 
         connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                while(true) {
+                while(!Thread.currentThread().isInterrupted()) {
                     Socket clientSocket = serverSocket.accept();
                     System.out.println(GREEN + "Client found at: " + YELLOW + clientSocket.getPort() + RESET);
 
@@ -78,13 +78,13 @@ public class Server {
         });
 
         // Start user input listening.
-        BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
         String userIn = "";
         System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
 
-        while((userIn = userReader.readLine()) != null && !userIn.equals("quit")) {
-            commandHandler(userIn);
-        }
+        // while((userIn = userReader.readLine()) != null && !userIn.equals("quit")) {
+        //     commandHandler(userIn);
+        // }
     }    
 
     /**
@@ -164,7 +164,6 @@ public class Server {
      * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
      */
     public static String broadcast(String msg, ClientHandler sender) {
-        System.out.println("Made it!");
 
         if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
             

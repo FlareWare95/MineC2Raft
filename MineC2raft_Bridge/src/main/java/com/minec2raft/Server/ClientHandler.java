@@ -25,13 +25,12 @@ public class ClientHandler extends Thread{
             out = new PrintWriter(socket.getOutputStream(), true);
 
             String line;
-            String finalLn = "";
+            System.out.println(Server.GREEN + "Start of broadcast @ port " + socket.getLocalPort() + Server.RESET + "\n");
             while ((line = in.readLine()) != null) {
-                System.out.println("HERE + " + line);
-                finalLn += line + "\n";
+                System.out.println(line);
                 out.println(line);
             }
-            recentLn = finalLn;
+            System.out.println("\n" + Server.GREEN + "Broadcast completed @ Port " + socket.getLocalPort() + "." + Server.RESET);
         } catch (IOException e) {
             System.out.println("Connection lost: " + socket.getRemoteSocketAddress());
             Server.clients.remove(this);
