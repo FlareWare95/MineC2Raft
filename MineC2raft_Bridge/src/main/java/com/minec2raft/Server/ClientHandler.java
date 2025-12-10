@@ -1,4 +1,4 @@
-package com.minec2raft;
+package com.minec2raft.Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;

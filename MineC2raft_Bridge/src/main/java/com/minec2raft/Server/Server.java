@@ -1,4 +1,4 @@
-package com.minec2raft;
+package com.minec2raft.Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**@author Austin Hall
  * Main server class that handles communication between multiple clients using the Client class.
+ * Server code modified for compatibility with minecraft plugins
  * Utilizes the ClientHandler class to offload some work between threads, and makes this class easier to read.
  * CHATGPT was used as a LEARNING TOOL in the creation of this software.
  */
@@ -24,16 +25,14 @@ public class Server {
     private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
-    private static ServerSocket serverSocket; //UDP socket
-    private ServerSocket mineSocket;
+    private static ServerSocket serverSocket; //This is not just a UDP socket idiot
 
     /**
-     * Creates a new Server object. please only make one of these bc idk what would happen if more than one is open...
+     * Creates a new Server object. Make only one of these plz
      */
     public Server(){
         try {
             serverSocket = new ServerSocket(5000);
-            mineSocket = new ServerSocket(1500);
         } catch(IOException e) {
             
             System.out.println("Creation of server Failed. " + e);
@@ -65,22 +64,6 @@ public class Server {
         });
         connectionThread.start();
 
-        Thread mineThread = new Thread(() -> {
-            try {
-                while(true) {
-                    System.out.println("HERE!!!");
-                    Socket toMinecraft = mineSocket.accept();
-                    System.out.println("MineBridge Connected!");
-                    ClientHandler handler = new ClientHandler(toMinecraft);
-                    clients.add(handler);
-                    
-                    handler.start(); 
-                }
-            } catch (IOException e) {
-                System.out.println(RED + "Client thread stopped." + RESET);
-            }
-        });
-        mineThread.start();
         // Start user input listening.
         BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
         String userIn = "";
