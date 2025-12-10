@@ -9,10 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.minec2raft.BridgeConnection;
 
 /**@author Austin Hall
  * Main server class that handles communication between multiple clients using the Client class.
@@ -29,7 +27,7 @@ public class Server {
     public static final String RESET = "§f";
 
     private static boolean exists = false;
-    private static BukkitTask connectionThread;
+
     
     
     private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
@@ -60,7 +58,7 @@ public class Server {
 
         //schedule bukkit thread to handle communications between server any any clients
 
-        connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        BukkitTask connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
                     Socket clientSocket = serverSocket.accept();
@@ -79,12 +77,7 @@ public class Server {
 
         // Start user input listening.
         //BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
-        String userIn = "";
         System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
-
-        // while((userIn = userReader.readLine()) != null && !userIn.equals("quit")) {
-        //     commandHandler(userIn);
-        // }
     }    
 
     /**
@@ -105,24 +98,23 @@ public class Server {
                 returnStr = broadcast(reply, null);
                 break;
             case "coms", "commands", "cmds", "HELP": 
-                reply = "               ********** MineC2raft Commands ***********\n\t\t" 
-                            + "os: displays the os of the client.\n\t\t"
-                            + "user: displays the name of the client.\n\t\t" 
-                            + "quit: exits the client port.\n\t\t" 
-                            + "clients: displays all connected clients.\n\t\t"
-                            + "about: about the program.\n\t"  
+                reply = "               ********** MineC2raft Commands ***********\n" 
+                            + "os: displays the os of the client.\n"
+                            + "user: displays the name of the client.\n" 
+                            + "quit: exits the client port.\n" 
+                            + "clients: displays all connected clients.\n"
+                            + "about: about the program.\n"  
                             + "       ******************************************\n\n" 
-                            + "WINDOWS ONLY\n(Maybe i'll add linux soon) but like lowk you can use a remote terminal \n" 
-                            + "Thats all you need to know foo\n\t\t";
+                            + "WINDOWS ONLY\n(i'll add linux soon) but like lowk you can use a remote terminal \n" 
+                            + "Thats all you need to know foo\n";
 
-                System.out.println(reply);
-                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
+                System.out.println(reply +"\n" + YELLOW  + "Broadcast Complete." + RESET);
                 break;
             case "poop":
                 for(int i = 1; i <= 100; i++) {
                     System.out.println(i + ": Poop");
                 }
-                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
+                System.out.println(YELLOW  + "Broadcast Complete." + RESET);
                 break;
             case "about", "abt":
                 reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
@@ -130,12 +122,12 @@ public class Server {
                         + "\nWritten by Austin Hall for RIT's Red Team.\n" 
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p oak_sapling 100";
-                System.out.println(reply);
-                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
+                  BroadcastPrintStream.println(reply, false);
+                System.out.println(YELLOW  + "Broadcast Complete." + RESET);
                 break;
             case "sockets", "clients", "list", "lst", "array", "arr":
                 formatArrLst(); 
-                System.out.println("\n" + YELLOW  + "Broadcast Complete." + "\u001B[0m");
+                 System.out.println(YELLOW  + "Broadcast Complete." + RESET);
                 break;                
             default: 
                 returnStr = broadcast(cmd, null);

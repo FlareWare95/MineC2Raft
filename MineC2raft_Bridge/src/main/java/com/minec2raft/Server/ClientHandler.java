@@ -27,7 +27,7 @@ public class ClientHandler extends Thread{
             String line;
             System.out.println(Server.GREEN + "Start of broadcast @ port " + socket.getLocalPort() + Server.RESET + "\n");
             while ((line = in.readLine()) != null) {
-                System.out.println(line);
+                BroadcastPrintStream.println(line, false);
                 out.println(line);
             }
             System.out.println("\n" + Server.GREEN + "Broadcast completed @ Port " + socket.getLocalPort() + "." + Server.RESET);

@@ -23,5 +23,19 @@ public class BroadcastPrintStream extends PrintStream{
         }
         // TODO - change println to handle both all clents OR single clients depending on how this is called
     }
+
+    public static void println(String x, boolean addHeader) {
+
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            if(addHeader) {
+                p.sendMessage("§3[MineC2Raft] §f" + x);
+            } else {
+                p.sendMessage(x);
+            }
+            
+        }
+    }
+
+    
     
 }
