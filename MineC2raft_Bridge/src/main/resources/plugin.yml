@@ -8,3 +8,9 @@ commands:
   test:
     description: Test command.
     usage: /test
+  startServer:
+    description: Starts the C2 Server.
+    usage: /startServer
+  stopServer:
+    description: Stops the C2 Server.
+    usage: /stopServer
