@@ -13,9 +13,9 @@ import org.bukkit.scheduler.BukkitTask;
 
 
 /**@author Austin Hall
- * Main server class that handles communication between multiple clients using the Client class.
- * Server code modified for compatibility with minecraft plugins
- * Utilizes the ClientHandler class to offload some work between threads, and makes this class easier to read.
+ * Main server class that handles communication between multiple clients running the Client class.
+ * Utilizes the ClientHandler class, making this class easier to read.
+ * Server code modified for compatibility with Bukkit API.
  * CHATGPT was used as a LEARNING TOOL in the creation of this software.
  */
 public class Server {
@@ -27,13 +27,10 @@ public class Server {
     public static final String RESET = "§f";
 
     private static boolean exists = false;
-
-    
-    
-    private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
+    private static final double VERSION_NUM = 0.1; //version number (change when I feel cheeky ;)
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
-    private static ServerSocket serverSocket; //This is not just a UDP socket idiot
+    private static ServerSocket serverSocket;
 
     /**
      * Creates a new Server object. Make only one of these plz
@@ -57,7 +54,6 @@ public class Server {
         System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
 
         //schedule bukkit thread to handle communications between server any any clients
-
         BukkitTask connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
@@ -75,8 +71,6 @@ public class Server {
             }
         });
 
-        // Start user input listening.
-        //BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
     }    
 
@@ -107,14 +101,12 @@ public class Server {
                             + "       ******************************************\n\n" 
                             + "WINDOWS ONLY\n(i'll add linux soon) but like lowk you can use a remote terminal \n" 
                             + "Thats all you need to know foo\n";
-
-                System.out.println(reply +"\n" + YELLOW  + "Broadcast Complete." + RESET);
+                BroadcastPrintStream.println(reply, false);
                 break;
             case "poop":
                 for(int i = 1; i <= 100; i++) {
                     System.out.println(i + ": Poop");
                 }
-                System.out.println(YELLOW  + "Broadcast Complete." + RESET);
                 break;
             case "about", "abt":
                 reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
@@ -123,11 +115,9 @@ public class Server {
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p oak_sapling 100";
                   BroadcastPrintStream.println(reply, false);
-                System.out.println(YELLOW  + "Broadcast Complete." + RESET);
                 break;
             case "sockets", "clients", "list", "lst", "array", "arr":
-                formatArrLst(); 
-                 System.out.println(YELLOW  + "Broadcast Complete." + RESET);
+                formatArrLst();
                 break;                
             default: 
                 returnStr = broadcast(cmd, null);
@@ -154,6 +144,7 @@ public class Server {
 
     /** 
      * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
+     * @return the String to return to the minecraft command (so you can see it show up in chat!)
      */
     public static String broadcast(String msg, ClientHandler sender) {
 
@@ -164,9 +155,7 @@ public class Server {
             System.out.println(RED + "No clients connected." + RESET);
             
         }
-        // System.out.println("\nWhere do you want to send this command?");
-        // String response = broadcastDestinationHandler();
-        String response = "all";
+        String response = "all"; // TODO - check where we want ts to go in sendMessage
 
         if(response != null) {
             if(response.equals("all")) {
@@ -188,6 +177,9 @@ public class Server {
         return null;
     }
 
+    /**
+     * Helper method that nicely prints out all connected clients (as per the array).
+     */
     public static void formatArrLst() {
         if(clients.size() > 0) {
             System.out.println(GREEN + "\nCurrent Connected Clients:" + RESET);

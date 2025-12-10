@@ -1,6 +1,5 @@
 package com.minec2raft;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -15,8 +14,6 @@ import com.minec2raft.Server.Server;
 
 public class MineBridge extends JavaPlugin{
 
-    
-    private BridgeConnection bridge;
     public static Server server;
     public static Scanner minecraftStream;
 
@@ -35,9 +32,6 @@ public class MineBridge extends JavaPlugin{
 
     @Override
     public void onDisable() {
-        if(bridge != null) {
-            bridge.shutdown();
-        }
         getLogger().info("MineC2raft Disconnected.");
     }
 

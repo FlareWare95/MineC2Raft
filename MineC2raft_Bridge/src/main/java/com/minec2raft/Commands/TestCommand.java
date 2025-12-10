@@ -23,10 +23,6 @@ public class TestCommand implements CommandExecutor{
             
             player.sendMessage("Test of server console!");
         }
-        
-
-        
-        
         return true;
     }
 }
