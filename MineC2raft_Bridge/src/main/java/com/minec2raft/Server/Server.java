@@ -20,7 +20,9 @@ public class Server {
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
     private static final String RESET = "\u001B[0m";
+
     private static boolean exists = false;
+    private static Thread connectionThread;
     
     
     private static final double VERSION_NUM = 0.02; //version number (change when I feel cheeky ;)
@@ -49,7 +51,7 @@ public class Server {
         System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
 
         //thread to handle communications between server any any clients
-        Thread connectionThread = new Thread(() -> {
+        connectionThread = new Thread(() -> {
             try {
                 while(true) {
                     Socket clientSocket = serverSocket.accept();
@@ -196,5 +198,14 @@ public class Server {
      */
     public static boolean isEnabled() {
         return exists;
+    }
+
+    public static void stopServer() {
+        try {
+            connectionThread.interrupt();
+        } catch(Exception e) {
+            System.out.println("Error stopping server: " + e);
+        }
+        
     }
 }
