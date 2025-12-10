@@ -9,11 +9,9 @@ import org.bukkit.Bukkit;
 
 public class BridgeConnection extends Thread{
     private final MineBridge plugin;
-    private Socket socket;
+    private Socket recieveSocket;
     private BufferedReader reader;
     
-
-
 
     public BridgeConnection(MineBridge plugin) {
         this.plugin = plugin;
@@ -22,25 +20,23 @@ public class BridgeConnection extends Thread{
 
     @Override
     public void run() {
-
         try {
-            socket = new Socket("localhost", 5050);
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+            recieveSocket = new Socket("localhost", 1500);
+            reader = new BufferedReader(new InputStreamReader(recieveSocket.getInputStream()));
             String line;
             while((line = reader.readLine()) != null) {
                 String msg = line;
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage("§b[MineC2raft]§r: " + msg));
             }
         } catch(Exception e) {
-            System.out.println("BridgeConnection run() error!");
+            System.out.println("BridgeConnection run() error!\n" + e);
         }
     }
 
     public void shutdown() {
         try {
-            if (socket != null) {
-                socket.close();
+            if (recieveSocket != null) {
+                recieveSocket.close();
             }
         } catch( IOException ignored) {
 

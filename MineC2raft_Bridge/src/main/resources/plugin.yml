@@ -1,13 +1,10 @@
-name: MineBridge
+name: MineC2raft
 version: 1.0
 main: com.minec2raft.MineBridge
 api-version: 1.21
 author: Flare
 description: A plugin that bridges Minecraft chat with an external program
 commands:
-  bridge:
-    description: Test command for bridge connection
-    usage: /bridge
   test:
     description: Test command.
     usage: /test

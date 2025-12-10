@@ -25,7 +25,5 @@ public class MineBridge extends JavaPlugin{
         }
         getLogger().info("MineC2raft Disconnected.");
     }
-    
-
 
 }

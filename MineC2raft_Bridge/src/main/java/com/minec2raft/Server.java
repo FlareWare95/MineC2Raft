@@ -33,6 +33,7 @@ public class Server {
     public Server(){
         try {
             serverSocket = new ServerSocket(5000);
+            mineSocket = new ServerSocket(1500);
         } catch(IOException e) {
             
             System.out.println("Creation of server Failed. " + e);
@@ -64,6 +65,22 @@ public class Server {
         });
         connectionThread.start();
 
+        Thread mineThread = new Thread(() -> {
+            try {
+                while(true) {
+                    System.out.println("HERE!!!");
+                    Socket toMinecraft = mineSocket.accept();
+                    System.out.println("MineBridge Connected!");
+                    ClientHandler handler = new ClientHandler(toMinecraft);
+                    clients.add(handler);
+                    
+                    handler.start(); 
+                }
+            } catch (IOException e) {
+                System.out.println(RED + "Client thread stopped." + RESET);
+            }
+        });
+        mineThread.start();
         // Start user input listening.
         BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
         String userIn = "";
