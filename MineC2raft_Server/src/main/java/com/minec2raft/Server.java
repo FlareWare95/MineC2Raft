@@ -8,6 +8,11 @@ import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**@author Austin Hall
+ * 
+ * THIS CODE IS NOW NO LONGER BEING DEVELOPED! 
+ * 
+ * THE SERVER YOU ARE LOOKING FOR IS IN THE MINEC2RAFT_BRIDGE FOLDER!!!!
+ * 
  * Main server class that handles communication between multiple clients using the Client class.
  * Utilizes the ClientHandler class to offload some work between threads, and makes this class easier to read.
  * CHATGPT was used as a LEARNING TOOL in the creation of this software.
@@ -25,7 +30,6 @@ public class Server {
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
     private static ServerSocket serverSocket; //UDP socket
-    private ServerSocket mineSocket;
 
     /**
      * Creates a new Server object. please only make one of these bc idk what would happen if more than one is open...
