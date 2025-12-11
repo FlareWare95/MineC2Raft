@@ -17,7 +17,7 @@ public class MineBridge extends JavaPlugin{
     public static Server server;
     public static Scanner minecraftStream;
 
-    
+     
     @Override
     public void onEnable() {
         PrintStream oldPrintStream = System.out;
@@ -26,7 +26,7 @@ public class MineBridge extends JavaPlugin{
         getCommand("test").setExecutor(new TestCommand());
         getCommand("startServer").setExecutor(new StartServer(this));
         getCommand("stopServer").setExecutor(new StopServer());
-        getCommand("sendMsg").setExecutor(new SendCommand());
+        getCommand("cmd").setExecutor(new SendCommand());
         System.out.println("MineC2raft Started."); 
     }
 

