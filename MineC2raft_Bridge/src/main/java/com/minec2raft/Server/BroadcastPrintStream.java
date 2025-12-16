@@ -3,6 +3,7 @@ package com.minec2raft.Server;
 import java.io.PrintStream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class BroadcastPrintStream extends PrintStream{
@@ -21,7 +22,15 @@ public class BroadcastPrintStream extends PrintStream{
         for(Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage("§3[MineC2Raft] §f" + x);
         }
-        // TODO - change println to handle both all clents OR single clients depending on how this is called
+    }
+
+    public static void println(String x, CommandSender target, boolean addHeader) {
+        if(addHeader) {
+            target.sendMessage("§3[MineC2Raft] §f" + x);
+        } else {
+            target.sendMessage(x);
+        }
+        
     }
 
     public static void println(String x, boolean addHeader) {

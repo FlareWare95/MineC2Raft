@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+
 import com.minec2raft.Server.Server;
 
 public class SendCommand implements CommandExecutor{
@@ -14,7 +15,13 @@ public class SendCommand implements CommandExecutor{
         for(int i = 0; i < args.length; i++) {
             userin = args[i];
         }
-        sender.sendMessage(Server.commandHandler(userin));
+        String target = args[args.length - 1];
+        try {
+            sender.sendMessage(Server.commandHandler(userin, args[args.length - 1], sender));
+        } catch(Exception e) {
+            sender.sendMessage("Invalid!");
+        }
+        
         
         
         return false;

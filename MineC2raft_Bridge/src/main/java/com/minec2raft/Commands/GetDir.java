@@ -14,7 +14,8 @@ public class GetDir implements CommandExecutor {
         for(int i = 0; i < args.length; i++) {
             userin = args[i];
         }
-        sender.sendMessage(Server.commandHandler("dir " + userin));
+        String target = args[args.length - 1];
+        sender.sendMessage(Server.commandHandler("dir " + userin, target, sender));
         return true;
     }
     

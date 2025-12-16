@@ -3,7 +3,7 @@ version: 1.0
 main: com.minec2raft.MineBridge
 api-version: 1.21
 author: Flare
-description: A plugin that bridges Minecraft chat with an external program
+description: A plugin that bridges Minecraft chat with an external Server ;>
 commands:
   test:
     description: Test command.
@@ -11,22 +11,22 @@ commands:
   startServer:
     description: Starts the C2 Server.
     usage: /startServer
-    aliases: [start]
+    aliases: start
   stopServer:
     description: Stops the C2 Server.
     usage: /stopServer
-    aliases: [stop]
+    aliases: stop
   cmd:
     description: Send a command to the C2 server.
     usage: /cmd (command here)
     aliases: [command, c]
   dir:
     description: Send a directory request to the C2 server.
-    usage: /dir + directory
+    usage: /dir directory target
     aliases: [directory, d]
   cd:
     description: Send a directory change request to the C2 server.
-    usage: /cd + directory
+    usage: /cd directory target
     aliases: [changeDirectory, c]
   C2Help:
     description: ask for help :).
