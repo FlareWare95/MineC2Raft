@@ -1,7 +1,6 @@
 package com.minec2raft;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,15 +10,18 @@ import com.minec2raft.Commands.SendCommand;
 import com.minec2raft.Commands.StartServer;
 import com.minec2raft.Commands.StopServer;
 import com.minec2raft.Commands.TestCommand;
+
 import com.minec2raft.Server.BroadcastPrintStream;
 import com.minec2raft.Server.Server;
 
+//TODO - test new commands 
+//TODO - alias tests
+//TODO - test MULTIPLE PLAYERS!!!!
 public class MineBridge extends JavaPlugin{
 
     public static Server server;
     public static Scanner minecraftStream;
 
-     
     @Override
     public void onEnable() {
         PrintStream oldPrintStream = System.out;
@@ -35,7 +37,7 @@ public class MineBridge extends JavaPlugin{
 
     @Override
     public void onDisable() {
-        getLogger().info("MineC2raft Disconnected.");
+        getLogger().info("MineC2raft Disabled.");
     }
 
 }
