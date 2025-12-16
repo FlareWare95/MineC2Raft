@@ -118,7 +118,7 @@ public class Server {
                         + "A dud?\n/give @p oak_sapling 100";
                   BroadcastPrintStream.println(reply, sender, false);
                 break;
-            case "sockets", "clients", "list", "lst", "array", "arr":
+            case "sockets", "clients", "list", "lst", "array", "arr": //this does not need to be here anymore but will stay for legacy
                 formatArrLst();
                 break;                
             default: 
@@ -126,22 +126,6 @@ public class Server {
                 break;  
         }
         return returnStr;
-    }
-
-    public static String broadcastDestinationHandler() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String response;
-        formatArrLst();
-        System.out.println("all: broadcast to all clients");
-        try {
-            response = reader.readLine();
-            
-            return response;
-        } catch(Exception e) {
-
-        }
-        return null;
-       
     }
 
     /** 
@@ -181,15 +165,18 @@ public class Server {
     /**
      * Helper method that nicely prints out all connected clients (as per the array).
      */
-    public static void formatArrLst() {
+    public static String formatArrLst() {
+        String arr = "";
         if(clients.size() > 0) {
-            System.out.println(GREEN + "\nCurrent Connected Clients:" + RESET);
+            arr += GREEN + "\nCurrent Connected Clients:" + RESET + "\n";
         } else {
-            System.out.println(RED + "No connected clients. " + RESET);
+            arr += RED + "No connected clients. " + RESET + "\n";
         }
         for(int i = 0; i < clients.size(); i++) {
-            System.out.println(YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort());
+             arr += YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort() + "\n";
         }
+        arr += "all: broadcast to all clients";
+        return arr;
     }
 
     /**

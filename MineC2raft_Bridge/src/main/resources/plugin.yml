@@ -27,7 +27,11 @@ commands:
   cd:
     description: Send a directory change request to the C2 server.
     usage: /cd directory target
-    aliases: [changeDirectory, c]
+    aliases: [changeDirectory, ch]
+  targets:
+    description: Returns a list of all possible places to send commands.
+    usage: /targets
+    aliases: [target, t, arr, lst]
   C2Help:
     description: ask for help :).
     usage: /helpC2

@@ -1,10 +1,12 @@
 package com.minec2raft;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.minec2raft.Commands.GetTargets;
 import com.minec2raft.Commands.SendCommand;
 import com.minec2raft.Commands.StartServer;
 import com.minec2raft.Commands.StopServer;
@@ -27,6 +29,7 @@ public class MineBridge extends JavaPlugin{
         getCommand("startServer").setExecutor(new StartServer(this));
         getCommand("stopServer").setExecutor(new StopServer());
         getCommand("cmd").setExecutor(new SendCommand());
+        getCommand("targets").setExecutor(new GetTargets());
         System.out.println("MineC2raft Started."); 
     }
 
