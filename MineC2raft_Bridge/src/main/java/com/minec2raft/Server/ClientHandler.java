@@ -7,47 +7,64 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import org.bukkit.command.CommandSender;
 
 public class ClientHandler extends Thread{
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
     public String recentLn = "";
+    public BlockingQueue<String> cmdQueue = new LinkedBlockingQueue<String>(); //omg a queue being used in a project
+    public static CommandSender sender;
 
     public ClientHandler(Socket soc) {
         socket = soc;
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
             String line;
-            System.out.println(Server.GREEN + "Start of broadcast @ port " + socket.getLocalPort() + Server.RESET + "\n");
-            while ((line = in.readLine()) != null) {
-                BroadcastPrintStream.println(line, false);
-                out.println(line);
+            while((line = in.readLine()) != null) { // when we finally get something, we'll put it in the queue
+                cmdQueue.put(line);
             }
-            System.out.println("\n" + Server.GREEN + "Broadcast completed @ Port " + socket.getLocalPort() + "." + Server.RESET);
         } catch (IOException e) {
             System.out.println("Connection lost: " + socket.getRemoteSocketAddress());
             Server.clients.remove(this);
             
+        }catch(InterruptedException e) {
+            Thread.currentThread().interrupt();
         } finally {
             try {
                 socket.close();
-            } catch (IOException ignored) {
-
-            }
+            } catch (IOException ignored) {}
         }
+    }
+
+    public String waitForBroadcast() throws InterruptedException {
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while((line = cmdQueue.poll(10,TimeUnit.SECONDS)) != null) {
+            if(line == "__END__") {
+                break;
+            }
+            
+            builder.append(line + "\n");
+        }
+
+        return builder.toString();
     }
 
     public void sendMessage(String msg) {
         if (out != null) {
             out.println(msg);
-
         }
     }
     

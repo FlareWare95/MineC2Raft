@@ -11,11 +11,12 @@ public class GetDir implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String userin = "";
-        for(int i = 0; i < args.length; i++) {
-            userin = args[i];
+        for(int i = 0; i < args.length - 1; i++) {
+            userin += args[i];
         }
+        System.out.println(userin);
         String target = args[args.length - 1];
-        sender.sendMessage(Server.commandHandler("dir " + userin, target, sender));
+        sender.sendMessage(Server.commandHandler("dir ", target, sender));
         return true;
     }
     

@@ -18,7 +18,7 @@ commands:
     aliases: stop
   cmd:
     description: Send a command to the C2 server.
-    usage: /cmd (command here)
+    usage: /cmd
     aliases: [command, c]
   dir:
     description: Send a directory request to the C2 server.
@@ -26,7 +26,7 @@ commands:
     aliases: [directory, d]
   cd:
     description: Send a directory change request to the C2 server.
-    usage: /cd directory target
+    usage: /cd > directory > target
     aliases: [changeDirectory, ch]
   targets:
     description: Returns a list of all possible places to send commands.

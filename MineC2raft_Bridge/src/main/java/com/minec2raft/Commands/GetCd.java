@@ -11,8 +11,8 @@ public class GetCd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String userin = "";
-        for(int i = 0; i < args.length; i++) {
-            userin = args[i];
+        for(int i = 0; i < args.length - 1; i++) {
+            userin += args[i];
         }
         String target = args[args.length - 1];
         sender.sendMessage(Server.commandHandler("cd " + userin, target, sender));

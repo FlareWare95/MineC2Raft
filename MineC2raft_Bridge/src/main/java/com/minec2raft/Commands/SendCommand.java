@@ -1,5 +1,7 @@
 package com.minec2raft.Commands;
 
+import java.util.UUID;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,19 +13,21 @@ public class SendCommand implements CommandExecutor{
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        System.out.println("HERE");
         String userin = "";
-        for(int i = 0; i < args.length; i++) {
-            userin = args[i];
+        String requestID = UUID.randomUUID().toString();
+        for(int i = 0; i < args.length - 1; i++) {
+            userin += " " + args[i];
         }
+
         String target = args[args.length - 1];
+        System.out.println(userin);
         try {
             sender.sendMessage(Server.commandHandler(userin, args[args.length - 1], sender));
         } catch(Exception e) {
             sender.sendMessage("Invalid!");
         }
         
-        
-        
-        return false;
+        return true;        
     }
 }

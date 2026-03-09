@@ -5,13 +5,15 @@ import java.util.Scanner;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.minec2raft.Commands.GetCd;
+import com.minec2raft.Commands.GetDir;
+import com.minec2raft.Commands.GetHelp;
 import com.minec2raft.Commands.GetTargets;
 import com.minec2raft.Commands.SendCommand;
 import com.minec2raft.Commands.StartServer;
 import com.minec2raft.Commands.StopServer;
 import com.minec2raft.Commands.TestCommand;
 
-import com.minec2raft.Server.BroadcastPrintStream;
 import com.minec2raft.Server.Server;
 
 //TODO - test new commands 
@@ -25,13 +27,15 @@ public class MineBridge extends JavaPlugin{
     @Override
     public void onEnable() {
         PrintStream oldPrintStream = System.out;
-        System.setOut(new BroadcastPrintStream(oldPrintStream));
         server = new Server();
         getCommand("test").setExecutor(new TestCommand());
         getCommand("startServer").setExecutor(new StartServer(this));
         getCommand("stopServer").setExecutor(new StopServer());
         getCommand("cmd").setExecutor(new SendCommand());
         getCommand("targets").setExecutor(new GetTargets());
+        getCommand("dir").setExecutor(new GetDir());
+        getCommand("cd").setExecutor(new GetCd());
+        getCommand("c2help").setExecutor(new GetHelp());
         System.out.println("MineC2raft Started."); 
     }
 
