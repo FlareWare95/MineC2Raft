@@ -18,7 +18,7 @@ commands:
     aliases: stop
   cmd:
     description: Send a command to the C2 server.
-    usage: /cmd
+    usage: "Usage: /<command> [command] [target]"
     aliases: [command, c]
   dir:
     description: Send a directory request to the C2 server.
@@ -35,4 +35,7 @@ commands:
   C2Help:
     description: ask for help :).
     usage: /helpC2
+  credits:
+    description: Learn about this cool software.
+    usage: /credits
   

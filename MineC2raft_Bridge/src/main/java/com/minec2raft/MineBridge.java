@@ -1,13 +1,12 @@
 package com.minec2raft;
 
-import java.io.PrintStream;
 import java.util.Scanner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import com.minec2raft.Commands.GetCd;
+import com.minec2raft.Commands.GetCredits;
 import com.minec2raft.Commands.GetDir;
 import com.minec2raft.Commands.GetHelp;
 import com.minec2raft.Commands.GetTargets;
@@ -38,7 +37,8 @@ public class MineBridge extends JavaPlugin{
         getCommand("dir").setExecutor(new GetDir());
         getCommand("cd").setExecutor(new GetCd());
         getCommand("c2help").setExecutor(new GetHelp());
-        Bukkit.broadcast("MineC2raft Started.","bukkit.broadcast.user"); 
+        getCommand("credits").setExecutor(new GetCredits());
+        Bukkit.broadcastMessage("MineC2raft Started."); 
     }
 
     @Override

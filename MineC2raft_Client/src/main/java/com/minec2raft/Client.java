@@ -39,7 +39,6 @@ public class Client {
                     if(cmd.toLowerCase().startsWith("cd")) {
                         String newPath;
                         if(!cmd.equals("cd")) {
-                            System.out.println("HERE");
                             newPath = cmd.substring(3).trim();
                         } else {
                             newPath = cmd;
@@ -77,10 +76,7 @@ public class Client {
                         writer.flush();
                     }
 
-                    } catch(IOException ignored) {
-                        System.out.println("WE IN HERE");
-                    }
-                System.out.println("ENDING THE MESSAGE");
+                    } catch(IOException ignored) {}
                 writer.println(END_STR);
                 shell.waitFor();
                 writer.flush();
