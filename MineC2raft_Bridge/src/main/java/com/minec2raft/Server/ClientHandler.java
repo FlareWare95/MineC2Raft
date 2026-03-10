@@ -11,6 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 public class ClientHandler extends Thread{
@@ -36,7 +37,7 @@ public class ClientHandler extends Thread{
                 cmdQueue.put(line);
             }
         } catch (IOException e) {
-            System.out.println("Connection lost: " + socket.getRemoteSocketAddress());
+            Bukkit.broadcastMessage("Connection lost: " + socket.getRemoteSocketAddress());
             Server.clients.remove(this);
             
         }catch(InterruptedException e) {
@@ -52,10 +53,10 @@ public class ClientHandler extends Thread{
         StringBuilder builder = new StringBuilder();
         String line;
         while((line = cmdQueue.poll(10,TimeUnit.SECONDS)) != null) {
-            if(line == "__END__") {
+            if(line.equals( "__END__")) {
                 break;
             }
-            
+            System.out.println("Current Line: " + line + "\n");
             builder.append(line + "\n");
         }
 

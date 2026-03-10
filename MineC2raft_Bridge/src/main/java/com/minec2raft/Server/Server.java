@@ -51,7 +51,7 @@ public class Server {
      * @throws IOException
      */
     public void runServer(JavaPlugin plugin) throws IOException {
-        System.out.println(GREEN + "Server Created. Listening for clients..." + RESET);
+        Bukkit.broadcastMessage(GREEN + "Server Created. Listening for clients..." + RESET);
 
         Runtime.getRuntime().addShutdownHook(new Thread(()-> {
             try {
@@ -66,7 +66,7 @@ public class Server {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println(GREEN + "Client found at: " + YELLOW + clientSocket.getPort() + RESET);
+                    Bukkit.broadcastMessage(GREEN + "Client found at: " + YELLOW + clientSocket.getPort() + RESET);
 
                     ClientHandler handler = new ClientHandler(clientSocket);
                     clients.add(handler);
@@ -75,11 +75,11 @@ public class Server {
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, handler);
                 }
             } catch (IOException e) {
-                System.out.println(RED + "Client thread stopped." + RESET);
+                Bukkit.broadcastMessage(RED + "Client thread stopped." + RESET);
             } 
         });
         
-        System.out.println(YELLOW + "Type '/coms' for a list of commands." + RESET);
+        Bukkit.broadcastMessage(YELLOW + "Type '/coms' for a list of commands." + RESET);
     }    
 
     /**

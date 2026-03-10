@@ -14,16 +14,15 @@ public class Client {
     private static final String END_STR = "__END__";
 
     public static void main(String args[]) throws Exception {
-            
+
         Socket socket = new Socket("localhost", 5000);
         PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
         createThread(socket, writer);
+
     }
 
     public static void createThread(Socket socket, PrintWriter writer) throws IOException {
-
         new Thread(() -> {
-
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String cmd;
@@ -61,26 +60,28 @@ public class Client {
                         } else {
                             writer.println("cannot find path.");
                         }
+                        writer.println(END_STR);
                         writer.flush();
                         continue;
                     }
 
-                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C", cmd + " & echo " + END_STR);
+                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C", cmd);
                 pb.directory(workingDir);
                 pb.redirectErrorStream(true);
                 Process shell = pb.start();
-
+                System.out.println("Running command: [" + cmd + "]");
                 try(BufferedReader shellOut = new BufferedReader(new InputStreamReader(shell.getInputStream()))) {
                     String line;
                     while((line = shellOut.readLine()) != null) {
-                        if(line.equals(END_STR)) {
-                            continue;
-                        }
                         writer.println(line);
                         writer.flush();
-                }
-                    } catch(IOException ignored) {}
-                
+                    }
+
+                    } catch(IOException ignored) {
+                        System.out.println("WE IN HERE");
+                    }
+                System.out.println("ENDING THE MESSAGE");
+                writer.println(END_STR);
                 shell.waitFor();
                 writer.flush();
                 }
