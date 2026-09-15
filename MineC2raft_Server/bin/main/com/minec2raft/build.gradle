@@ -1,0 +1,3 @@
+dependencies {
+    implementation project(':MineC2raft_Bridge')
+}

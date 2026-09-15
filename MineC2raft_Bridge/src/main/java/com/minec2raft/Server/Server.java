@@ -27,7 +27,7 @@ public class Server {
     public static final String GLITCH = "§k";    
     public static final String RESET = "§f";
 
-
+    public static final String BRAND_IDENTITY = "[MineC2raft]: ";
     private static boolean exists = false;
     private static final double VERSION_NUM = 1.0; //version number (change when I feel cheeky ;)
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
@@ -41,11 +41,11 @@ public class Server {
     public Server(){
         try {
             serverSocket = new ServerSocket(5000);
-            System.out.println("Server Ready.");
+            System.out.println(BRAND_IDENTITY + "Server Ready.");
             exists = true;
         } catch(IOException e) {
             
-            System.out.println("Creation of server Failed. " + e);
+            System.out.println(BRAND_IDENTITY + "Creation of server Failed. " + e);
         }
     } 
     
@@ -54,7 +54,7 @@ public class Server {
      * @throws IOException
      */
     public void runServer(JavaPlugin plugin) throws IOException {
-        Bukkit.broadcastMessage(GREEN + "Server Created. Listening for clients..." + RESET);
+        Bukkit.broadcastMessage(BRAND_IDENTITY + GREEN + "Server Created. Listening for clients..." + RESET);
 
         Runtime.getRuntime().addShutdownHook(new Thread(()-> {
             try {
@@ -69,7 +69,7 @@ public class Server {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
                     Socket clientSocket = serverSocket.accept();
-                    Bukkit.broadcastMessage(GREEN + "Client found at: " + YELLOW + clientSocket.getPort() + RESET);
+                    Bukkit.broadcastMessage(BRAND_IDENTITY + GREEN + "Client found at: " + YELLOW + clientSocket.getPort() + RESET);
 
                     ClientHandler handler = new ClientHandler(clientSocket);
                     clients.add(handler);
@@ -78,11 +78,11 @@ public class Server {
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, handler);
                 }
             } catch (IOException e) {
-                Bukkit.broadcastMessage(RED + "Client thread stopped." + RESET);
+                Bukkit.broadcastMessage(BRAND_IDENTITY + RED + "Client thread stopped." + RESET);
             } 
         });
         
-        Bukkit.broadcastMessage(YELLOW + "Type '/c2help' for a list of commands." + RESET);
+        Bukkit.broadcastMessage(BRAND_IDENTITY + YELLOW + "Type '/c2help' for a list of commands." + RESET);
     }    
 
     /**
@@ -144,7 +144,7 @@ public class Server {
             
         }
         if(clients.isEmpty()) {
-            System.out.println(RED + "No clients connected." + RESET);
+            System.out.println(BRAND_IDENTITY + RED + "No clients connected." + RESET);
         }
 
         if(response != null) {
@@ -173,7 +173,7 @@ public class Server {
      * Helper method that nicely prints out all connected clients (as per the array).
      */
     public static String formatArrLst() {
-        String arr = "";
+        String arr = BRAND_IDENTITY;
         if(clients.size() == 0) {
             arr += RED + "No connected clients. " + RESET + "\n";
             return arr;

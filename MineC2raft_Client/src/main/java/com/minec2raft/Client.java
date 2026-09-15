@@ -64,7 +64,7 @@ public class Client {
                         continue;
                     }
 
-                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C", cmd);
+                ProcessBuilder pb = new ProcessBuilder("powershell.exe", "/C", cmd);
                 pb.directory(workingDir);
                 pb.redirectErrorStream(true);
                 Process shell = pb.start();
@@ -87,20 +87,4 @@ public class Client {
             }
         }).start();
     }
-/**
- * Broken rn
- */
-// public static void clientRunner(PrintWriter writer) throws Exception {
-//     String userIn = "";
-//     while(!userIn.equals("quit")) {
-//         try {
-//             Socket socket = new Socket("localhost", 50000);
-//             TimeUnit.SECONDS.sleep(1);
-//             createThread(socket, writer);
-//         } catch (SocketException e) {
-//             System.out.println("Cannot resolve to host. Retrying...");
-//         }
-
-//     }
-// }
 }

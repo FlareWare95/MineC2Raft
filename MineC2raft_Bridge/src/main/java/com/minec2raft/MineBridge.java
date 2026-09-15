@@ -19,13 +19,16 @@ import com.minec2raft.Server.Server;
 
 //TODO - test new commands 
 //TODO - alias tests
-//TODO - test MULTIPLE PLAYERS!!!!
 //TODO - CONVERT CLIENT CODE TO C OR LOWER FOR COOLNESS
 public class MineBridge extends JavaPlugin{
 
     public static Server server;
     public static Scanner minecraftStream;
 
+    /** 
+     * initialize all commands here
+     * @see org.bukkit.plugin.java.JavaPlugin#onEnable()
+     */
     @Override
     public void onEnable() {
         server = new Server();
@@ -38,6 +41,7 @@ public class MineBridge extends JavaPlugin{
         getCommand("cd").setExecutor(new GetCd());
         getCommand("c2help").setExecutor(new GetHelp());
         getCommand("credits").setExecutor(new GetCredits());
+        getCommand("send").setExecutor(new SendCommand());
         Bukkit.broadcastMessage("MineC2raft Started."); 
     }
 

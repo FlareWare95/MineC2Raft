@@ -19,7 +19,7 @@ public class StartServer implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         try {
-            if(Server.isEnabled()) {
+            if(!Server.isEnabled()) {
                 MineBridge.server.runServer(plugin);
             } else {
                 sender.sendMessage("The server has already been enabled!");
