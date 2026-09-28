@@ -1,6 +1,7 @@
 ---
 - name: Deploy MineC2raft Client
-  vars: 
+  vars:
+      client_source: ""
       base_dir: "{{ ansible_user_dir }}"
   tasks: 
 #####################################################################################
@@ -31,7 +32,7 @@
 
     - name: Send Client (Linux)
       ansible.builtin.copy:
-        src: /local/path/to/file.conf
+        src: "{{ client_source }}" 
         dest: "{{ base_dir }}/curseforge/minec2raft/Install"
         mode: '0644'
       when: ansible_os_family == 'Linux'
@@ -54,11 +55,20 @@
       - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\versions"
       - "{{ base_dir }}\\Curseforge\\minec2raft\\Instances"
       - "{{ base_dir }}\\Curseforge\\minec2raft\\Quickplay"
-      
+
       when: ansible_os_family == 'Windows'
 
     - name: "Send Client configuration (Windows)"
       ansible.windows.win_copy:
-          src: /local/path/to/file.conf
+          src: "{{ client_source }}" 
           dest: "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\file.conf"
+      when: ansible_os_family == 'Windows'
+
+    - name: "Set ACL for client (Windows)"
+      ansible.win_acl: 
+          path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.exe"
+          user: "EVERYONE"
+          rights: Read,Write,Modify,FullControl,Delete
+          type: deny
+          state: "present"
       when: ansible_os_family == 'Windows'
