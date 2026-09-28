@@ -19,7 +19,7 @@ import com.minec2raft.Server.Server;
 
 //TODO - test new commands 
 //TODO - alias tests
-//TODO - CONVERT CLIENT CODE TO C OR LOWER FOR COOLNESS
+//TODO - CONVERT CLIENT CODE TO GO
 public class MineBridge extends JavaPlugin{
 
     public static Server server;

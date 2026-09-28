@@ -28,6 +28,7 @@ public class Server {
     public static final String RESET = "§f";
 
     public static final String BRAND_IDENTITY = "[MineC2raft]: ";
+    public static final int PORT = 25565;
     private static boolean exists = false;
     private static final double VERSION_NUM = 1.0; //version number (change when I feel cheeky ;)
     public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>(); // array of clients as threads.
@@ -40,7 +41,7 @@ public class Server {
      */
     public Server(){
         try {
-            serverSocket = new ServerSocket(5000);
+            serverSocket = new ServerSocket(PORT);
             System.out.println(BRAND_IDENTITY + "Server Ready.");
             exists = true;
         } catch(IOException e) {
