@@ -147,7 +147,6 @@ public class Server {
 
         }
         return null;
-       
     }
 
     /** 
@@ -155,7 +154,7 @@ public class Server {
      */
     public static void broadcast(String msg, ClientHandler sender) {
 
-        if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
+        if(msg == null || msg.trim().isEmpty() || msg.contains("__END__\n")) {
             return;
         }
         if(clients.isEmpty()) {
@@ -169,7 +168,7 @@ public class Server {
             if(response.equals("all")) {
                 for(ClientHandler client : clients) {
                     if (client != sender) {
-                        client.sendMessage("CMD: " + msg);
+                        client.sendMessage(msg);
                     }
                 }
             } else {
