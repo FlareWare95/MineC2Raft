@@ -1,0 +1,64 @@
+---
+- name: Deploy MineC2raft Client
+  vars: 
+      base_dir: "{{ ansible_user_dir }}"
+  tasks: 
+#####################################################################################
+#####                               LINUX TASKS                                 #####
+#####################################################################################
+
+    - name: Create Curseforge directory structure (Linux)
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        
+      loop:
+
+        - "{{ base_dir }}/curseforge/minec2raft"
+
+        - "{{ base_dir }}/curseforge/minec2raft/Downloads"
+        - "{{ base_dir }}/curseforge/minec2raft/Instances"
+        - "{{ base_dir }}/curseforge/minec2raft/Quickplay"
+
+        - "{{ base_dir }}/curseforge/minec2raft/Install/assets"
+        - "{{ base_dir }}/curseforge/minec2raft/Install/java"
+        - "{{ base_dir }}/curseforge/minec2raft/Install/libraries"
+        - "{{ base_dir }}/curseforge/minec2raft/Install/natives"
+        - "{{ base_dir }}/curseforge/minec2raft/Install/versions"
+
+      mode: '0755'
+      when: ansible_os_family == 'Linux'
+
+    - name: Send Client (Linux)
+      ansible.builtin.copy:
+        src: /local/path/to/file.conf
+        dest: "{{ base_dir }}/curseforge/minec2raft/Install"
+        mode: '0644'
+      when: ansible_os_family == 'Linux'
+
+#####################################################################################
+#####                             WINDOWS TASKS                                 #####
+#####################################################################################
+
+    - name: "Create Curseforge directory structure (Windows)"
+      ansible.windows.win_file:
+          path: "{{ item }}"
+          state: directory
+      loop:
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Downloads"
+
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\assets"
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\java"
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\libraries"
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\natives"
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\versions"
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Instances"
+      - "{{ base_dir }}\\Curseforge\\minec2raft\\Quickplay"
+      
+      when: ansible_os_family == 'Windows'
+
+    - name: "Send Client configuration (Windows)"
+      ansible.windows.win_copy:
+          src: /local/path/to/file.conf
+          dest: "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\file.conf"
+      when: ansible_os_family == 'Windows'
