@@ -36,7 +36,7 @@ public class Server {
      */
     public Server(){
         try {
-            serverSocket = new ServerSocket(5000);
+            serverSocket = new ServerSocket(25565);
         } catch(IOException e) {
             
             System.out.println("Creation of server Failed. " + e);
@@ -163,16 +163,17 @@ public class Server {
         }
         System.out.println("\nWhere do you want to send this command?");
         String response = broadcastDestinationHandler();
-
+        System.out.println("Sending message: " + msg);
         if(response != null) {
             if(response.equals("all")) {
                 for(ClientHandler client : clients) {
                     if (client != sender) {
-                        client.sendMessage(msg);
+                        client.sendMessage("CMD: " + msg);
                     }
                 }
             } else {
                 try {
+                    
                     clients.get(Integer.parseInt(response)).sendMessage("CMD: " + msg);
                 } catch(Exception e) {
                     System.out.println("Not a valid option.");
