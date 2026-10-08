@@ -17,9 +17,7 @@ import com.minec2raft.Commands.TestCommand;
 
 import com.minec2raft.Server.Server;
 
-//TODO - test new commands 
-//TODO - alias tests
-//TODO - CONVERT CLIENT CODE TO GO
+
 public class MineBridge extends JavaPlugin{
 
     public static Server server;
@@ -41,7 +39,6 @@ public class MineBridge extends JavaPlugin{
         getCommand("cd").setExecutor(new GetCd());
         getCommand("c2help").setExecutor(new GetHelp());
         getCommand("credits").setExecutor(new GetCredits());
-        getCommand("send").setExecutor(new SendCommand());
         Bukkit.broadcastMessage("MineC2raft Started."); 
     }
 
