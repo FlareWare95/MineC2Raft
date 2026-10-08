@@ -1,18 +1,23 @@
 # MineC2Raft
 
-## For educational purposes only. Usage of this software outside of controlled red teaming environments is illegal and unethical.
+## FOR EDUCATIONAL PURPOSES ONLY. Usage of this software outside of controlled red teaming environments is illegal and unethical.
 
-A C2 server written in Java that utilizes Minecraft's chat feature as it's terminal.
+Have you ever been red teaming and felt that sending commands to clients was boring?<br><br>
+
+No? <br><br>
+
+Well too bad, this one works in Minecraft.<br> 
+Now you can destroy the hopes and dreams of blue teamers while creating beautiful creations in one of the most popular sandbox games out there.
 
 ## Server Features:
-· Server written in Java, usable fully in the Minecraft CLI.
-· Support for basically as many clients as there are open ports
+· Server written in Java, usable fully in the Minecraft CLI.<br>
+· Support for basically as many clients as there are open ports<br>
 · Easter eggs
 
 ## Client Features:
 
-· Reverse shell written in go, with various layers of persistence.
-· Client support for both Windows and Linux.
+· Reverse shell written in go, with various layers of persistence.<br>
+· Client support for both Windows and Linux.<br>
 · Clients deployable via Ansible.
 
 
