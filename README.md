@@ -15,7 +15,6 @@ Now you can destroy the hopes and dreams of blue teamers while creating beautifu
 · Easter eggs
 · Good clean fun for all ages
 
-
 ## Client Features:
 
 · Reverse shell written in go, with various layers of persistence.<br>
