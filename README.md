@@ -1,6 +1,6 @@
 # MineC2Raft
 
-## FOR EDUCATIONAL PURPOSES ONLY. Usage of this software outside of controlled red teaming environments is illegal and unethical.
+## FOR EDUCATIONAL PURPOSES ONLY. Usage of this software outside of controlled red teaming environments is  ILLEGAL and UNETHICAL.
 
 Have you ever been red teaming and felt that sending commands to clients was boring?<br><br>
 
@@ -19,7 +19,16 @@ Now you can destroy the hopes and dreams of blue teamers all while creating beau
 
 · Reverse shell written in go, with various layers of persistence.<br>
 · Client support for both Windows and Linux.<br>
-· Clients deployable via Ansible.
+· Clients deployable via Ansible.<br>
+· Amaze all your friends by opening calc.exe with your mind
+
+## Minecraft Commands: 
+
+· /startserver - begin the magic<br>
+· /targets - list all of your victims<br>
+· /cmd [command] [target] - Send a generic command to specified target. [command] has support for spaced commands using quotations.<br>
+· /dir [target] - shortcut to see directory listing of specified target.<br>
+· /helpC2 - get help (duh)
 
 
 
