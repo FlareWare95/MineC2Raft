@@ -1,2 +1,0 @@
-rootProject.name = 'MineC2raft'
-include 'MineC2raft_Bridge', 'MineC2raft_Server', 'MineC2raft_Client'
