@@ -12,7 +12,7 @@ Now you can destroy the hopes and dreams of blue teamers while creating beautifu
 ## Server Features:
 · Server written in Java, usable fully in the Minecraft CLI.<br>
 · Support for basically as many clients as there are open ports<br>
-· Easter eggs
+· Easter eggs<br>
 · Good clean fun for all ages
 
 ## Client Features:
