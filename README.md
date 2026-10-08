@@ -6,13 +6,15 @@ Have you ever been red teaming and felt that sending commands to clients was bor
 
 No? <br><br>
 
-Well too bad, this one works in Minecraft.<br> 
+Well too bad, cus this C2 can be used in Minecraft.<br> 
 Now you can destroy the hopes and dreams of blue teamers while creating beautiful creations in one of the most popular sandbox games out there.
 
 ## Server Features:
 · Server written in Java, usable fully in the Minecraft CLI.<br>
 · Support for basically as many clients as there are open ports<br>
 · Easter eggs
+· Good clean fun for all ages
+
 
 ## Client Features:
 
