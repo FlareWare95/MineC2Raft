@@ -1,0 +1,28 @@
+---
+all:
+  children:
+    Linux:
+      vars:
+        ansible_user: 
+        ansible_password: 
+        ansible_become_user: "root"
+        ansible_become_password: 
+        ansible_become_method: sudo
+        become: yes
+      children:
+        lin:
+          hosts:
+          #put da linux hosts here
+
+    Windows:
+      vars:
+        ansible_connection: winrm
+        ansible_winrm_server_cert_validation: ignore
+        ansible_winrm_port: 5985 # http
+        ansible_winrm_transport: ntlm
+        ansible_user: "hiiiihiiiii"
+        ansible_password:
+      children:
+        win:
+          hosts:
+            #put da windows hosts hear

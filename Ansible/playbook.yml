@@ -1,0 +1,21 @@
+---
+- name: Linux Deploy
+  hosts: Linux
+  become: true
+  gather_facts: false
+  roles:
+    - Linux
+  tags:
+    - linux
+    - deploy
+
+- name: Windows Deploy
+  hosts: Windows
+  become: true
+  gather_facts: false
+  roles:
+    - Windows
+  tags:
+    - windows
+    - deploy  
+  

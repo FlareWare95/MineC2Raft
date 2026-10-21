@@ -26,7 +26,7 @@ Now you can destroy the hopes and dreams of blue teamers all while creating beau
 
 · /startserver - begin the magic<br>
 · /targets - list all of your victims<br>
-· /cmd [command] [target] - Send a generic command to specified target. [command] has support for spaced commands using quotations.<br>
+· /cmd [command] [target] - Send command to specified target. [command] has support for spaced commands using quotations.<br>
 · /dir [target] - shortcut to see directory listing of specified target.<br>
 · /helpC2 - get help (duh)
 
