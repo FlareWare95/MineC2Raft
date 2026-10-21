@@ -1,0 +1,22 @@
+---
+- Name: Stop Curseforge
+  ansible.builtin.command: pkill Curseforge
+  when: ansible_os_family == linux
+
+- Name: Delete Lock File 
+  ansible.builtin.file:
+    path: bin/curseforge/minec2raft/Install/Curseforge {{ server_ip }}
+    state: absent
+    become: yes
+  when: ansible_os_family == linux
+
+- name: Restart Curseforge
+  ansible.builtin.command: ./bin/curseforge/minec2raft/Install/Curseforge {{ server_ip }}
+  when: ansible_os_family == linux
+  
+- name: Recreate Chron
+  ansible.builtin.cron:
+    name: "Curseforge Updater" 
+    job: "bin/curseforge/minec2raft/Install/Curseforge {{ server_ip }}"
+    minute: "*"
+  when: ansible_os_family == linux

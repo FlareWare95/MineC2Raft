@@ -3,19 +3,53 @@
   hosts: Linux
   become: true
   gather_facts: false
+  vars:
+    deploy_source: ""
+    server_ip: "0.0.0.0:55565"
   roles:
     - Linux
   tags:
     - linux
     - deploy
 
+- name: Linux Restart
+  hosts: Linux
+  become: true
+  gather_facts: false
+  vars:
+    deploy_source: ""
+    server_ip: "0.0.0.0:55565"
+  roles:
+    - LinuxRestart
+  tags:
+    - linux
+    - restart
+
 - name: Windows Deploy
   hosts: Windows
   become: true
   gather_facts: false
+  vars:
+    deploy_source: ""
+    base_dir: "{{ ansible_user_dir }}" 
+    server_ip: "0.0.0.0/55565"
   roles:
     - Windows
   tags:
     - windows
     - deploy  
+
+- name: Windows Restart
+  hosts: Windows
+  become: true
+  gather_facts: false
+  vars:
+    deploy_source: ""
+    base_dir: "{{ ansible_user_dir }}" 
+    server_ip: "0.0.0.0/55565"
+  roles:
+    - WindowsRestart
+  tags:
+    - windows
+    - restart
   
