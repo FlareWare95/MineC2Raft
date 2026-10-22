@@ -10,7 +10,7 @@ public class GetTargets implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage(Server.formatArrLst());
+        sender.sendMessage(Server.currentConnectedClients());
         return true;
     }
     
