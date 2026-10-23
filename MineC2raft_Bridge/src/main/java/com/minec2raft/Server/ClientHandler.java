@@ -37,8 +37,11 @@ public class ClientHandler extends Thread{
                 cmdQueue.put(line);
             }
         } catch (IOException e) {
-            Bukkit.broadcastMessage("Connection lost: " + socket.getRemoteSocketAddress());
+            Bukkit.broadcastMessage(Server.BRAND_IDENTITY + "Connection lost: " + socket.getRemoteSocketAddress());
+
+            int osind = Server.clients.indexOf(this);
             Server.clients.remove(this);
+            Server.clientsOs.remove(osind);
             
         }catch(InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -53,7 +56,7 @@ public class ClientHandler extends Thread{
         StringBuilder builder = new StringBuilder();
         String line;
         while((line = cmdQueue.poll(10,TimeUnit.SECONDS)) != null) {
-            if(line.equals( "__END__")) {
+            if(line.equals( "__END__") ) {
                 break;
             }
             System.out.println("Current Line: " + line + "\n");
