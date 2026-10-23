@@ -4,13 +4,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import com.minec2raft.MineBridge;
 import com.minec2raft.Server.Server;
 
 public class GetTargets implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage(Server.currentConnectedClients());
+        if(MineBridge.server != null) {
+            sender.sendMessage(Server.currentConnectedClients());
+            
+        } else {
+            sender.sendMessage("Server Disabled!");
+        }
         return true;
     }
     
