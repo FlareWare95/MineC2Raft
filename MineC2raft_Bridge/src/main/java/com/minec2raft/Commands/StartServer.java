@@ -19,14 +19,15 @@ public class StartServer implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         try {
-            if(!Server.isEnabled()) {
+            if(MineBridge.server == null) {
+                MineBridge.server = new Server();
                 MineBridge.server.runServer(plugin);
             } else {
                 sender.sendMessage("The server has already been enabled!");
             }
             return true;
         } catch(Exception e) {
-            System.out.println("Error Starting Server!" + e);
+            System.out.println("Error Starting Server! " + e);
             return false;
         }
         
