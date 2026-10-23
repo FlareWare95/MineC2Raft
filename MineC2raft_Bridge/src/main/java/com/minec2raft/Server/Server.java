@@ -10,6 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+//TODO: Test Ansible
+//TODO: Clean up integration between ClientData and ClientHandler arrays
+//TODO: Add Wildcard
+//TODO: implement windos and linux selection for command broadcasting
+
 
 /**@author Austin Hall
  * Main server class that handles communication between multiple clients running the Client class.
@@ -119,7 +124,7 @@ public class Server {
      * interpreted through the client's terminal.
      * @param cmd - the user input.
      */
-    public static String commandHandler(String cmd, String target, CommandSender sender) {
+    public static String commandHandler( String target, String cmd, CommandSender sender) {
         String reply;
         String returnStr = "";
         switch(cmd) {
