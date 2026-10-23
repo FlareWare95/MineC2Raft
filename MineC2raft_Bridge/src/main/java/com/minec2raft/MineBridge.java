@@ -29,7 +29,7 @@ public class MineBridge extends JavaPlugin{
      */
     @Override
     public void onEnable() {
-        server = new Server();
+        
         getCommand("test").setExecutor(new TestCommand());
         getCommand("startServer").setExecutor(new StartServer(this));
         getCommand("stopServer").setExecutor(new StopServer());
