@@ -34,7 +34,7 @@ public class Server {
     public static final String RESET = "§f";
     public static final String BRAND_IDENTITY = BOLD + YELLOW + "[MineC2raft]: " + RESET;
     public static final double VERSION_NUM = 1.0;
-    public static final int PORT = 25565;
+    public static final int PORT = 1000;
     
     private static ServerSocket serverSocket; //socket of the server duh
     private static BukkitTask connectionThread; // bukkit thread that synchronises actions between this server and minecraft.
@@ -295,7 +295,7 @@ public class Server {
                 arr += YELLOW + i + ": " + RESET + windowsClients.get(i).getLastKnownIp() + "\n";
             }
         }
-        arr += GREEN + "linux: broadcast to all linux clients\nwindows: broadcast to all windows clients" + RESET;
+        arr += GREEN + "linux: broadcast to all Linux clients\nwindows: broadcast to all Windows clients" + RESET;
         return arr;
     }
 

@@ -1,28 +1,28 @@
 ---
-# - name: Linux Deploy
-#   hosts: linux
-#   become: true
-#   gather_facts: true
-#   vars:
-#     deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge"
-#     server_ip: "bore.pub:52859"
-#   roles:
-#     - Linux
-#   tags:
-#     - linux
-#     - deploy
+- name: Linux Deploy
+  hosts: linux
+  become: true
+  gather_facts: true
+  vars:
+    deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge"
+    server_ip: "18.225.220.228:25565"
+  roles:
+    - Linux
+  tags:
+    - linux
+    - deploy
 
-# - name: Linux Restart
-#   hosts: linux
-#   become: true
-#   gather_facts: true
-#   vars:
-#     deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge"
-#     server_ip: "bore.pub:52859"
-#   roles:
-#     - LinuxRestart
-#   tags:
-#     - restart
+- name: Linux Restart
+  hosts: linux
+  become: true
+  gather_facts: true
+  vars:
+    deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge"
+    server_ip: "18.225.220.228:25565"
+  roles:
+    - LinuxRestart
+  tags:
+    - restart
 
 - name: Windows Deploy
   hosts: windows
@@ -30,7 +30,7 @@
   vars:
     deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge.exe"
     base_dir: "{{ ansible_user_dir }}" 
-    server_ip: "bore.pub:52859"
+    server_ip: "18.225.220.228:25565"
   roles:
     - Windows
   tags:
@@ -43,7 +43,7 @@
   vars:
     deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge.exe"
     base_dir: "{{ ansible_user_dir }}" 
-    server_ip: "bore.pub:52859"
+    server_ip: "18.225.220.228:25565"
   roles:
     - WindowsRestart
   tags:

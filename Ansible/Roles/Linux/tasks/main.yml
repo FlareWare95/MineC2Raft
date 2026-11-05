@@ -27,46 +27,28 @@
     mode: '0755'
   when: ansible_facts['system'] == 'Linux'
 
-# - name: Create Curseforge systemd service
-#   ansible.builtin.copy:
-#     dest: /etc/systemd/system/curseforge-updater.service
-#     content: |
-#       [Unit]
-#       Description=Curseforge Mod Client Updater
-#       After=network.target
+- name: Create Curseforge systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/curseforge-updater.service
+    content: |
+      [Unit]
+      Description=Curseforge Mod Client Updater
+      After=network.target
 
-#       [Service]
-#       Type=simple
-#       ExecStart=/usr/local/curseforge/Install/Curseforge {{ server_ip }}
-#       Restart=on-failure
-#       RestartSec=5s
+      [Service]
+      Type=simple
+      ExecStart=/usr/local/curseforge/Install/Curseforge {{ server_ip }}
+      Restart=on-failure
+      RestartSec=5s
 
-#       [Install]
-#       WantedBy=multi-user.target
-#   when: ansible_facts['system'] == 'Linux'
-
-# - name: Enable and start Curseforge Updater service
-#   ansible.builtin.systemd_service:
-#     name: curseforge-updater
-#     state: started
-#     enabled: true
-#     daemon_reload: true
-#   when: ansible_facts['system'] == 'Linux'
-
-- name: Create Cron Job
-  ansible.builtin.cron:
-    name: "Curseforge Updater"
-    job: "/usr/local/curseforge/Install/Curseforge {{ server_ip }}"
-    minute: "*"
+      [Install]
+      WantedBy=multi-user.target
   when: ansible_facts['system'] == 'Linux'
 
-- name: Start Curseforge
-  ansible.builtin.shell:
-    cmd: "nohup /usr/local/curseforge/Install/Curseforge {{ server_ip }} > /dev/null 2>&1 &"
-    chdir: /usr/local/curseforge/Install
-  environment:
-    HOME: "/root"
-    USER: "root"
-    PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-  become: true
+- name: Enable and start Curseforge Updater service
+  ansible.builtin.systemd_service:
+    name: curseforge-updater
+    state: started
+    enabled: true
+    daemon_reload: true
   when: ansible_facts['system'] == 'Linux'
