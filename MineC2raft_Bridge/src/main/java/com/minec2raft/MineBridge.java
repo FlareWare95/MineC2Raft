@@ -16,7 +16,9 @@ import com.minec2raft.Commands.StopServer;
 import com.minec2raft.Commands.TestCommand;
 
 import com.minec2raft.Server.Server;
-
+//TODO: Create commands for db and wildcard
+//TODO: Look into implementing hypixel-like menus
+//TODO: Look into making something happen when Ender Dragon is defeated
 
 public class MineBridge extends JavaPlugin{
 

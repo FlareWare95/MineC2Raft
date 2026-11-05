@@ -1,38 +1,36 @@
 ---
-- name: Linux Deploy
-  hosts: Linux
-  become: true
-  gather_facts: false
-  vars:
-    deploy_source: ""
-    server_ip: "0.0.0.0:55565"
-  roles:
-    - Linux
-  tags:
-    - linux
-    - deploy
+# - name: Linux Deploy
+#   hosts: linux
+#   become: true
+#   gather_facts: true
+#   vars:
+#     deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge"
+#     server_ip: "bore.pub:52859"
+#   roles:
+#     - Linux
+#   tags:
+#     - linux
+#     - deploy
 
-- name: Linux Restart
-  hosts: Linux
-  become: true
-  gather_facts: false
-  vars:
-    deploy_source: ""
-    server_ip: "0.0.0.0:55565"
-  roles:
-    - LinuxRestart
-  tags:
-    - linux
-    - restart
+# - name: Linux Restart
+#   hosts: linux
+#   become: true
+#   gather_facts: true
+#   vars:
+#     deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge"
+#     server_ip: "bore.pub:52859"
+#   roles:
+#     - LinuxRestart
+#   tags:
+#     - restart
 
 - name: Windows Deploy
-  hosts: Windows
-  become: true
-  gather_facts: false
+  hosts: windows
+  gather_facts: true
   vars:
-    deploy_source: ""
+    deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge.exe"
     base_dir: "{{ ansible_user_dir }}" 
-    server_ip: "0.0.0.0/55565"
+    server_ip: "bore.pub:52859"
   roles:
     - Windows
   tags:
@@ -40,16 +38,14 @@
     - deploy  
 
 - name: Windows Restart
-  hosts: Windows
-  become: true
-  gather_facts: false
+  hosts: windows
+  gather_facts: true
   vars:
-    deploy_source: ""
+    deploy_source: "/mnt/c/Users/Flare/OneDrive/Desktop/DeployLocation/Curseforge.exe"
     base_dir: "{{ ansible_user_dir }}" 
-    server_ip: "0.0.0.0/55565"
+    server_ip: "bore.pub:52859"
   roles:
     - WindowsRestart
   tags:
-    - windows
     - restart
   

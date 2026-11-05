@@ -3,6 +3,7 @@ package com.minec2raft.Server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
@@ -11,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 //TODO: Test Ansible
-//TODO: Clean up integration between ClientData and ClientHandler arrays
 //TODO: Add Wildcard
 //TODO: implement windos and linux selection for command broadcasting
 
@@ -39,8 +39,7 @@ public class Server {
     private static ServerSocket serverSocket; //socket of the server duh
     private static BukkitTask connectionThread; // bukkit thread that synchronises actions between this server and minecraft.
 
-    public static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
-    public static final CopyOnWriteArrayList<String> clientsOs = new CopyOnWriteArrayList<>();
+    public static final CopyOnWriteArrayList<ClientData> clients = new CopyOnWriteArrayList<>();
 
     public static final CopyOnWriteArrayList<ClientData> windowsClients = new CopyOnWriteArrayList<>();
     public static final CopyOnWriteArrayList<ClientData> linuxClients = new CopyOnWriteArrayList<>();
@@ -50,7 +49,7 @@ public class Server {
      */
     public Server(){
         try {
-            serverSocket = new ServerSocket(55565);
+            serverSocket = new ServerSocket(PORT);
             System.out.println(BRAND_IDENTITY + "Server Ready.");
         } catch(IOException e) {
             System.out.println(BRAND_IDENTITY + "Creation of server Failed. " + e);
@@ -76,14 +75,14 @@ public class Server {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
                     Socket clientSocket = serverSocket.accept();
-                    Bukkit.broadcastMessage(BRAND_IDENTITY + GREEN + "Client found at: " + YELLOW + clientSocket.getPort() + RESET);
 
                     ClientHandler handler = new ClientHandler(clientSocket);
                     handler.start(); 
                     registerClient(handler);
-                    clients.add(handler);
-                    
+                    // clients.add(handler);
+                   
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, handler);
+                    
                 }
             } catch (IOException e) {
                 Bukkit.broadcastMessage(BRAND_IDENTITY + RED + "Client thread stopped." + RESET);
@@ -101,16 +100,23 @@ public class Server {
      */
     private static boolean registerClient(ClientHandler handler){
         try {
-          String temp = handler.waitForBroadcast();
-            if (temp.contains("windows")) {
+            ClientData data;
+            String temp = handler.waitForBroadcast();
+            String temparr[] = temp.split(" ");
+          
+            if (temparr[temparr.length - 2].contains("windows")) {
                 System.out.println("DETECTED WINDOWS");
-                windowsClients.add(new ClientData(handler.getInetAddr().toString(), "Windows", handler, true));
-                clientsOs.add("Windows");
+                data = new ClientData(temparr[temparr.length - 1], "Windows", handler, true);
+                windowsClients.add(data);
+                clients.add(data);
             } else {
-                 System.out.println("DETECTED LINUX");
-                linuxClients.add(new ClientData(handler.getInetAddr().toString(), "Linux", handler, true));
-                clientsOs.add("Linux");
+                System.out.println("DETECTED LINUX");
+                data = new ClientData(temparr[temparr.length - 1], "Linux", handler, true);
+                linuxClients.add(data);
+                clients.add(data);
             }
+             Bukkit.broadcastMessage(BRAND_IDENTITY + GREEN + "Client found at: " + YELLOW + temparr[temparr.length - 1] + RESET);
+             
             return true;
         } catch (Exception e) { 
             Bukkit.broadcastMessage("ERROR: " + e);
@@ -155,34 +161,64 @@ public class Server {
      */
     public static String broadcast(String msg, CommandSender sender, String target) {
 
-        if(msg == null || msg.trim().isEmpty() || msg.equals("__END__\n")) {
-            
-        }
+        if(msg == null || msg.trim().isEmpty() || msg.equals("__END__\n")) { }
+
         if(clients.isEmpty()) {
             System.out.println(BRAND_IDENTITY + RED + "No clients connected." + RESET);
         }
 
-        if(target != null) {
-            if(target.equals("all")) {
-                for(ClientHandler client : clients) {
-                    if (client != sender) { //shouldn't be the case ever anymore, but just to be sure...
-                        client.sendMessage("CMD: " + msg);
+        switch(target) {
+            case "all":
+                for(ClientData client : clients) {
+                        client.getHandler().sendMessage("CMD: " + msg);
+                    }
+                return BRAND_IDENTITY + "All clients recieved command.";
+            case "windows":
+                for(ClientData client: clients) {
+                    if(client.getDetectedOs().equals("windows")) {
+                        client.getHandler().sendMessage("CMD: " + msg);
                     }
                 }
-                return BRAND_IDENTITY + "All clients recieved command.";
-            } else {
+                return BRAND_IDENTITY + "All windows clients recieved command.";
+
+            case "linux":
+                for(ClientData client: clients) {
+                    if(client.getDetectedOs().equals("linux")) {
+                        client.getHandler().sendMessage("CMD: " + msg);
+                    }
+                }
+                return BRAND_IDENTITY + "All linux clients recieved command.";
+            
+            case "index":
                 try {
                     int destination = Integer.parseInt(target);
-                    clients.get(destination).sendMessage("CMD: " + msg);
+                    clients.get(destination).getHandler().sendMessage("CMD: " + msg);
                     try {
-                        return clients.get(destination).waitForBroadcast();
+
+                        String result = clients.get(destination).getHandler().waitForBroadcast();
+                        if (result.equals("CONNECTION FAILED!\n")) {
+                            Bukkit.broadcastMessage( Server.BRAND_IDENTITY + 
+                                                     "Connection lost: " + 
+                                                     clients.get(destination).getLastKnownIp());
+                            clients.remove(destination);
+                        }
+                        return result;
                     } catch(InterruptedException e) { return BRAND_IDENTITY + "ERROR IN GETTING CLIENTS";}
-                } catch(Exception e) {
-                    System.out.println("Invalid Target!");
-                }
+                } catch(Exception e) { System.out.println("Invalid Target!"); }
+                    
+            default: // destination is raw ip / wildcard
+            String octet[] = target.split(".");
+            System.out.println("Octet: " + Arrays.toString(octet));
+            for(ClientData data: clients) {
+                String targetoctet[] = data.getLastKnownIp().split(":");
+                System.out.println("in Octet: " + Arrays.toString(targetoctet));
             }
-        }
+
+
+
+            }
         return BRAND_IDENTITY + "ERROR BROADCASTING!";
+                
     }
     
     /**
@@ -197,7 +233,7 @@ public class Server {
         } else {
             arr += GREEN + "\nCurrent Connected Clients:" + RESET + "\n";
             for(int i = 0; i < clients.size(); i++) {
-                arr += YELLOW + i + ": " + RESET + clients.get(i).getInetAddr() + " OS: " + clientsOs.get(i) + "\n\n";
+                arr += YELLOW + i + ": " + RESET + clients.get(i).getLastKnownIp() + " OS: " + clients.get(i).getDetectedOs() + "\n\n";
             }
         
         }
@@ -265,13 +301,12 @@ public class Server {
 
     public static void stopServer() {
         try {
-            for(ClientHandler client : clients) {
-                client.sendMessage("CMD: __CLOSING__");
+            for(ClientData client : clients) {
+                client.getHandler().sendMessage("CMD: __CLOSING__");
             }
             serverSocket.close();
             connectionThread.cancel();
             clients.clear();
-            clientsOs.clear();
 
         } catch(Exception e) {
             System.out.println("Error stopping server: " + e);

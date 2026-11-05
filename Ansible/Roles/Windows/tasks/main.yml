@@ -1,0 +1,65 @@
+---
+- name: "Create Curseforge Directories"
+  ansible.windows.win_file:
+    path: "{{ item }}"
+    state: "directory"
+  loop:
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Downloads"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\assets"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\java"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\libraries"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\natives"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\versions"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Instances"
+    - "{{ base_dir }}\\Curseforge\\minec2raft\\Quickplay"
+  when: ansible_os_family == 'Windows'
+
+- name: "Send Client configuration"
+  ansible.windows.win_copy:
+    src: "{{ deploy_source }}"
+    dest: "{{ base_dir }}\\Curseforge\\minec2raft\\Install\\"
+  when: ansible_os_family == 'Windows'
+
+- name: "Set ACL for client"
+  ansible.windows.win_acl:
+    path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.exe"
+    user: "EVERYONE"
+    rights: Read,Write,Modify,FullControl,Delete
+    type: allow
+    state: "present"
+  when: ansible_os_family == 'Windows'
+
+- name: Create Scheduled Task
+  community.windows.win_scheduled_task:
+    name: Curseforge Updater
+    description: Updates the Curseforge Mod Client.
+    state: present
+    enabled: true
+    username: SYSTEM
+    logon_type: service_account
+    actions:
+      - path: "{{ base_dir }}\\curseforge\\minec2raft\\Install\\Curseforge.exe"
+        arguments: "{{ server_ip }}"
+    triggers:
+      - type: time
+        start_boundary: "2011-11-18T12:00:00"
+        repetition:
+          interval: PT5M
+    start_when_available: true
+    compatibility: 4
+  when: ansible_os_family == 'Windows'
+
+- name: Start Task
+  ansible.windows.win_shell: Start-ScheduledTask -TaskName "Curseforge Updater"
+  when: ansible_os_family == 'Windows'
+
+- name: Run Curseforge in background
+  ansible.windows.win_command:
+    cmd: "{{ base_dir }}\\curseforge\\minec2raft\\Install\\Curseforge.exe {{ server_ip }}"
+  async: 60
+  poll: 0
+  when: ansible_os_family == 'Windows'
+
+# - name: Start Curseforge
+#   ansible.windows.win_shell: "{{ base_dir }}\\curseforge\\minec2raft\\Install\\Curseforge.exe {{ server_ip }}"
+#   when: ansible_os_family == 'Windows'

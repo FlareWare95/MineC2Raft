@@ -1,0 +1,41 @@
+---
+- name: Stop Curseforge
+  ansible.windows.win_shell: Stop-Process -Name "Curseforge" -Force
+  ignore_errors: true
+  when: ansible_os_family == 'Windows'
+
+- name: Delete Lock File
+  ansible.windows.win_file:
+    path: "{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.lock"
+    state: absent
+  when: ansible_os_family == 'Windows'
+
+# - name: Restart Curseforge
+#   ansible.windows.win_shell: "./{{ base_dir }}/curseforge/minec2raft/Install/Curseforge.exe {{ server_ip }}"
+#   when: ansible_os_family == 'Windows'
+
+- name: Delete Scheduled Task
+  community.windows.win_scheduled_task:
+    name: Curseforge Updater
+    state: absent
+  when: ansible_os_family == 'Windows'
+  
+- name: Recreate Scheduled Task
+  community.windows.win_scheduled_task:
+    name: Curseforge Updater
+    description: Updates the Curseforge Mod Client.
+    state: present
+    enabled: true
+    username: SYSTEM
+    logon_type: service_account
+    actions:
+      - path: "{{ base_dir }}\\curseforge\\minec2raft\\Install\\Curseforge.exe"
+        arguments: "{{ server_ip }}"
+    triggers:
+      - type: time
+        start_boundary: "2011-11-18T12:00:00"
+        repetition:
+          interval: PT5M
+    start_when_available: true
+    compatibility: 4
+  when: ansible_os_family == 'Windows'

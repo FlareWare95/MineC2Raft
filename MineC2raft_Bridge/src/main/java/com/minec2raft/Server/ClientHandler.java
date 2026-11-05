@@ -11,7 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 public class ClientHandler extends Thread{
@@ -37,12 +36,13 @@ public class ClientHandler extends Thread{
                 cmdQueue.put(line);
             }
         } catch (IOException e) {
-            Bukkit.broadcastMessage(Server.BRAND_IDENTITY + "Connection lost: " + socket.getRemoteSocketAddress());
-
-            int osind = Server.clients.indexOf(this);
-            Server.clients.remove(this);
-            Server.clientsOs.remove(osind);
-            
+            for(ClientData data : Server.clients) {
+                System.out.println(data.getLastKnownIp() + " " + this.getInetAddr().getHostAddress());
+                if(data.getLastKnownIp().contains(this.getInetAddr().getHostAddress())) {
+                    System.out.println("Client @" + data.getLastKnownIp() + "disconnected. Removing...");
+                    Server.clients.remove(data);
+                }
+            }
         }catch(InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -55,12 +55,16 @@ public class ClientHandler extends Thread{
     public String waitForBroadcast() throws InterruptedException {
         StringBuilder builder = new StringBuilder();
         String line;
-        while((line = cmdQueue.poll(10,TimeUnit.SECONDS)) != null) {
+        while((line = cmdQueue.poll(5,TimeUnit.SECONDS)) != null) {
             if(line.equals( "__END__") ) {
                 break;
             }
             System.out.println("Current Line: " + line + "\n");
             builder.append(line + "\n");
+        }
+
+        if(line == null) {
+            builder.append("CONNECTION FAILED!\n");
         }
 
         return builder.toString();
